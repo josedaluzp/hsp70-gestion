@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.actividades import router as actividades_router
 from app.api.auth import router as auth_router
 from app.api.evaluaciones import router as evaluaciones_router
+from app.api.inscripciones import router as inscripciones_router
 from app.api.notificaciones import router as notificaciones_router
 from app.api.planes import router as planes_router
 from app.api.turnos import router as turnos_router
@@ -29,6 +30,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(actividades_router)
 app.include_router(evaluaciones_router)
+app.include_router(inscripciones_router)
 app.include_router(notificaciones_router)
 app.include_router(planes_router)
 app.include_router(turnos_router)
