@@ -6,7 +6,7 @@ tools:
   - Grep
   - Glob
   - Bash
-description: Diseña APIs REST/GraphQL limpias, consistentes y bien documentadas con schemas y validación.
+description: "Use when designing or implementing REST/GraphQL APIs, database models, schemas, endpoints, authentication, payments integration, or any backend business logic. Triggers: 'API', 'endpoint', 'schema', 'model', 'CRUD', 'auth', 'JWT', 'route', 'middleware', 'database', 'migration', 'Pydantic', 'SQLAlchemy', 'pagos', 'Mercado Pago'."
 ---
 
 # API Designer Agent

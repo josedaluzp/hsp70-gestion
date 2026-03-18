@@ -6,7 +6,7 @@ tools:
   - Grep
   - Glob
   - Bash
-description: Escribe test suites completos, identifica gaps de coverage y diseña estrategias de testing.
+description: "Use when writing unit, integration, or e2e tests, designing test strategies, fixing flaky tests, improving coverage, or creating test fixtures and seed data. Triggers: 'test', 'coverage', 'fixture', 'mock', 'assert', 'TDD', 'e2e', 'integration test', 'unit test', 'seeder', 'datos de prueba'."
 ---
 
 # Test Engineer Agent

@@ -6,7 +6,7 @@ tools:
   - Grep
   - Glob
   - Bash
-description: Crea estructuras de proyecto production-ready, configura tooling, CI/CD y Docker.
+description: "Use when setting up a new project from scratch, initializing directory structure, configuring build tools, linters, formatters, package managers, CI/CD pipelines, or Docker. Triggers: 'scaffold', 'setup', 'init', 'boilerplate', 'configure CI', 'create project', 'project structure', 'docker', 'tooling'."
 ---
 
 # Project Scaffolder Agent

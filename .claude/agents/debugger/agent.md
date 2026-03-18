@@ -5,7 +5,7 @@ tools:
   - Grep
   - Glob
   - Bash
-description: Investigación de bugs con metodología hypothesis-driven y root cause analysis.
+description: "Use when investigating bugs, analyzing error logs or stack traces, tracing unexpected behavior, performing root cause analysis, or diagnosing failures that other agents could not resolve. Triggers: 'bug', 'debug', 'investigate', 'error', 'broken', 'failing', 'crash', 'root cause', 'stack trace', 'regression'."
 ---
 
 # Debugger Agent

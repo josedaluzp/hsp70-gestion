@@ -7,7 +7,7 @@ tools:
   - Grep
   - Glob
   - Bash
-description: Reestructura código preservando comportamiento — extract, rename, split, merge, migrate patterns.
+description: "Use when restructuring existing code without changing behavior: extracting functions/modules, renaming for clarity, splitting large files, merging duplicates, migrating patterns, or reorganizing layout. Triggers: 'refactor', 'extract', 'rename', 'split', 'merge', 'restructure', 'migrate', 'clean up', 'simplify', 'reorganize'."
 ---
 
 # Refactorer Agent
