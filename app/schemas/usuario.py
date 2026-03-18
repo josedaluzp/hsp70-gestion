@@ -77,3 +77,20 @@ class UserUpdate(BaseModel):
             msg = "Birth date cannot be in the future"
             raise ValueError(msg)
         return v
+
+
+class UserList(BaseModel):
+    items: list[UserRead]
+    total: int
+    page: int
+    page_size: int
+    pages: int
+
+
+class ProfesorRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    nombre: str
+    apellido: str
+    email: str
