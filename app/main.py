@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.actividades import router as actividades_router
 from app.api.auth import router as auth_router
+from app.api.turnos import router as turnos_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -23,6 +24,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(actividades_router)
+app.include_router(turnos_router)
 
 
 @app.get("/health")
