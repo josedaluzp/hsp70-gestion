@@ -10,6 +10,11 @@ class AsistenciaCreate(BaseModel):
     observacion: str | None = None
 
 
+class AsistenciaUpdate(BaseModel):
+    presente: bool | None = None
+    observacion: str | None = None
+
+
 class AsistenciaRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -18,3 +23,21 @@ class AsistenciaRead(BaseModel):
     fecha: date
     presente: bool
     observacion: str | None
+
+
+class AsistenciaDetailRead(BaseModel):
+    id: int
+    inscripcion_id: int
+    fecha: date
+    presente: bool
+    observacion: str | None
+    alumno_id: int | None = None
+    nombre_alumno: str | None = None
+
+
+class AsistenciaList(BaseModel):
+    items: list[AsistenciaDetailRead]
+    total: int
+    page: int
+    page_size: int
+    pages: int
