@@ -1,4 +1,5 @@
 from app.schemas.actividad import ActividadCreate, ActividadRead
+from app.schemas.auth import LoginRequest, Token, TokenData
 from app.schemas.asistencia import AsistenciaCreate, AsistenciaRead
 from app.schemas.evaluacion_salud import EvaluacionSaludCreate, EvaluacionSaludRead
 from app.schemas.inscripcion import InscripcionCreate, InscripcionRead
@@ -12,6 +13,9 @@ from app.schemas.usuario import UserCreate, UserRead, UserUpdate
 __all__ = [
     "ActividadCreate",
     "ActividadRead",
+    "LoginRequest",
+    "Token",
+    "TokenData",
     "AsistenciaCreate",
     "AsistenciaRead",
     "EvaluacionSaludCreate",
