@@ -1,12 +1,28 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
-const NAV_ITEMS = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: (props: { className?: string }) => JSX.Element;
+  adminOnly?: boolean;
+  section?: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
   { to: "/", label: "Dashboard", icon: DashboardIcon },
   { to: "/pacientes", label: "Pacientes", icon: UsersIcon },
   { to: "/agenda", label: "Agenda", icon: CalendarIcon },
   { to: "/reportes", label: "Reportes", icon: ChartIcon },
+  { to: "/notificaciones", label: "Notificaciones", icon: BellIcon },
+];
+
+const ADMIN_NAV_ITEMS: NavItem[] = [
+  { to: "/admin/usuarios", label: "Usuarios", icon: AdminUsersIcon, adminOnly: true, section: "admin" },
+  { to: "/admin/actividades", label: "Actividades", icon: ActivityIcon, adminOnly: true, section: "admin" },
+  { to: "/admin/turnos", label: "Turnos", icon: CalendarIcon, adminOnly: true, section: "admin" },
+  { to: "/admin/planes", label: "Planes", icon: PlanIcon, adminOnly: true, section: "admin" },
 ];
 
 export default function MainLayout() {
@@ -30,6 +46,12 @@ export default function MainLayout() {
     recepcionista: "Recepcionista",
     alumno: "Alumno",
   };
+
+  const isAdmin = user?.rol === "admin";
+  const navItems = useMemo(
+    () => (isAdmin ? [...NAV_ITEMS, ...ADMIN_NAV_ITEMS] : NAV_ITEMS),
+    [isAdmin],
+  );
 
   return (
     <div className="flex h-screen overflow-hidden bg-neutral-50">
@@ -67,30 +89,41 @@ export default function MainLayout() {
 
         {/* Navigation */}
         <nav className="mt-4 flex-1 space-y-1 px-3 overflow-y-auto">
-          {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === "/"}
-              onClick={() => setMobileOpen(false)}
-              title={collapsed ? label : undefined}
-              className={({ isActive }) =>
-                `group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
-                transition-colors duration-150
-                ${collapsed ? "lg:justify-center lg:px-0" : ""}
-                ${
-                  isActive
-                    ? "bg-sidebar-active text-white"
-                    : "text-neutral-300 hover:bg-sidebar-hover hover:text-white"
-                }`
-              }
-            >
-              <Icon className="h-5 w-5 shrink-0" />
-              {!collapsed && <span>{label}</span>}
-              {collapsed && (
-                <span className="hidden">{label}</span>
+          {navItems.map(({ to, label, icon: Icon, section }, idx) => (
+            <div key={to}>
+              {section === "admin" && idx > 0 && navItems[idx - 1]?.section !== "admin" && (
+                <div className={`my-3 ${collapsed ? "mx-2" : "mx-1"}`}>
+                  <div className="border-t border-white/10" />
+                  {!collapsed && (
+                    <p className="mt-3 mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
+                      Administración
+                    </p>
+                  )}
+                </div>
               )}
-            </NavLink>
+              <NavLink
+                to={to}
+                end={to === "/"}
+                onClick={() => setMobileOpen(false)}
+                title={collapsed ? label : undefined}
+                className={({ isActive }) =>
+                  `group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
+                  transition-colors duration-150
+                  ${collapsed ? "lg:justify-center lg:px-0" : ""}
+                  ${
+                    isActive
+                      ? "bg-sidebar-active text-white"
+                      : "text-neutral-300 hover:bg-sidebar-hover hover:text-white"
+                  }`
+                }
+              >
+                <Icon className="h-5 w-5 shrink-0" />
+                {!collapsed && <span>{label}</span>}
+                {collapsed && (
+                  <span className="hidden">{label}</span>
+                )}
+              </NavLink>
+            </div>
           ))}
         </nav>
 
@@ -235,6 +268,38 @@ function LogoutIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+    </svg>
+  );
+}
+
+function BellIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+    </svg>
+  );
+}
+
+function AdminUsersIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+    </svg>
+  );
+}
+
+function ActivityIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+    </svg>
+  );
+}
+
+function PlanIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
     </svg>
   );
 }
