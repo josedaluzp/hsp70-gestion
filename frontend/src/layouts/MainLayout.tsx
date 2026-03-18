@@ -9,47 +9,57 @@ const NAV_ITEMS = [
 ];
 
 export default function MainLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden bg-neutral-50">
       {/* Mobile overlay */}
-      {sidebarOpen && (
+      {mobileOpen && (
         <div
           className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+          style={{ animation: "fade-in 200ms ease-out" }}
+          onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-sidebar
-          transition-transform duration-200 ease-in-out
+          fixed inset-y-0 left-0 z-40 flex flex-col bg-sidebar
+          transition-all duration-200 ease-in-out
           lg:static lg:translate-x-0
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
+          ${collapsed ? "lg:w-[4.5rem]" : "lg:w-64"}
+          w-64
         `}
       >
         {/* Brand */}
-        <div className="flex h-16 items-center gap-3 px-6">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500">
+        <div className="flex h-16 items-center gap-3 px-6 shrink-0">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-500">
             <span className="text-sm font-bold text-white">H</span>
           </div>
-          <span className="text-lg font-semibold tracking-tight text-white">
-            HSP-70
-          </span>
+          {!collapsed && (
+            <span className="text-lg font-semibold tracking-tight text-white whitespace-nowrap">
+              HSP-70
+            </span>
+          )}
         </div>
 
         {/* Navigation */}
-        <nav className="mt-4 flex-1 space-y-1 px-3">
+        <nav className="mt-4 flex-1 space-y-1 px-3 overflow-y-auto">
           {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
               end={to === "/"}
-              onClick={() => setSidebarOpen(false)}
+              onClick={() => setMobileOpen(false)}
+              title={collapsed ? label : undefined}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                `group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
+                transition-colors duration-150
+                ${collapsed ? "lg:justify-center lg:px-0" : ""}
+                ${
                   isActive
                     ? "bg-sidebar-active text-white"
                     : "text-neutral-300 hover:bg-sidebar-hover hover:text-white"
@@ -57,29 +67,87 @@ export default function MainLayout() {
               }
             >
               <Icon className="h-5 w-5 shrink-0" />
-              {label}
+              {!collapsed && <span>{label}</span>}
+              {collapsed && (
+                <span className="hidden">{label}</span>
+              )}
             </NavLink>
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="border-t border-white/10 px-6 py-4">
-          <p className="text-xs text-neutral-400">HSP-70 Gestión v0.1</p>
+        {/* User section */}
+        <div className="border-t border-white/10 p-3 shrink-0">
+          <div
+            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 ${
+              collapsed ? "lg:justify-center lg:px-0" : ""
+            }`}
+          >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-xs font-semibold text-white">
+              AD
+            </div>
+            {!collapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">
+                  Admin
+                </p>
+                <p className="text-xs text-neutral-400 truncate">
+                  Administrador
+                </p>
+              </div>
+            )}
+          </div>
+          {!collapsed && (
+            <button
+              type="button"
+              className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-neutral-400 transition-colors duration-150 hover:bg-sidebar-hover hover:text-white"
+            >
+              <LogoutIcon className="h-4 w-4 shrink-0" />
+              Cerrar sesión
+            </button>
+          )}
+          {collapsed && (
+            <button
+              type="button"
+              title="Cerrar sesión"
+              className="mt-1 flex w-full items-center justify-center rounded-lg py-2 text-neutral-400 transition-colors duration-150 hover:bg-sidebar-hover hover:text-white"
+            >
+              <LogoutIcon className="h-4 w-4 shrink-0" />
+            </button>
+          )}
         </div>
+
+        {/* Version */}
+        {!collapsed && (
+          <div className="px-6 py-3 shrink-0">
+            <p className="text-xs text-neutral-500">v0.1.0</p>
+          </div>
+        )}
       </aside>
 
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
         <header className="flex h-16 shrink-0 items-center gap-4 border-b border-neutral-200 bg-white px-4 lg:px-8">
+          {/* Mobile menu toggle */}
           <button
             type="button"
             className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 lg:hidden"
-            onClick={() => setSidebarOpen(true)}
+            onClick={() => setMobileOpen(true)}
             aria-label="Abrir menú"
           >
             <MenuIcon className="h-5 w-5" />
           </button>
+
+          {/* Desktop sidebar collapse toggle */}
+          <button
+            type="button"
+            className="hidden lg:flex rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition-colors duration-150"
+            onClick={() => setCollapsed((c) => !c)}
+            aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+          >
+            <CollapseIcon className={`h-5 w-5 transition-transform duration-200 ${collapsed ? "rotate-180" : ""}`} />
+          </button>
+
           <div className="flex-1" />
         </header>
 
@@ -130,6 +198,22 @@ function MenuIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>
+  );
+}
+
+function CollapseIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+    </svg>
+  );
+}
+
+function LogoutIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
     </svg>
   );
 }
