@@ -19,3 +19,12 @@ class NotificacionRead(BaseModel):
     mensaje: str
     leida: bool
     fecha: datetime
+
+
+class NotificacionList(BaseModel):
+    items: list[NotificacionRead]
+    total: int
+    total_no_leidas: int
+    page: int
+    page_size: int
+    pages: int
