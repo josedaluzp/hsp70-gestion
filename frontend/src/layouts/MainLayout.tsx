@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard", icon: DashboardIcon },
@@ -9,8 +10,26 @@ const NAV_ITEMS = [
 ];
 
 export default function MainLayout() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+
+  function handleLogout() {
+    logout();
+    navigate("/login");
+  }
+
+  const initials = user
+    ? `${user.nombre[0]}${user.apellido[0]}`.toUpperCase()
+    : "";
+  const displayName = user ? `${user.nombre} ${user.apellido}` : "";
+  const rolLabel: Record<string, string> = {
+    admin: "Administrador",
+    profesor: "Profesor",
+    recepcionista: "Recepcionista",
+    alumno: "Alumno",
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-neutral-50">
@@ -83,15 +102,15 @@ export default function MainLayout() {
             }`}
           >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-xs font-semibold text-white">
-              AD
+              {initials}
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-white truncate">
-                  Admin
+                  {displayName}
                 </p>
                 <p className="text-xs text-neutral-400 truncate">
-                  Administrador
+                  {user ? rolLabel[user.rol] ?? user.rol : ""}
                 </p>
               </div>
             )}
@@ -99,6 +118,7 @@ export default function MainLayout() {
           {!collapsed && (
             <button
               type="button"
+              onClick={handleLogout}
               className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-neutral-400 transition-colors duration-150 hover:bg-sidebar-hover hover:text-white"
             >
               <LogoutIcon className="h-4 w-4 shrink-0" />
@@ -109,6 +129,7 @@ export default function MainLayout() {
             <button
               type="button"
               title="Cerrar sesión"
+              onClick={handleLogout}
               className="mt-1 flex w-full items-center justify-center rounded-lg py-2 text-neutral-400 transition-colors duration-150 hover:bg-sidebar-hover hover:text-white"
             >
               <LogoutIcon className="h-4 w-4 shrink-0" />
