@@ -462,55 +462,53 @@ class TestPagoRead:
 
 class TestEvaluacionSaludCreate:
     def test_valid_minimal(self):
-        ev = EvaluacionSaludCreate(alumno_id=1, profesional_id=2)
-        assert ev.peso_kg is None
+        ev = EvaluacionSaludCreate(alumno_id=1, peso_kg=70, altura_cm=170)
+        assert ev.grasa_corporal is None
 
     def test_valid_full(self):
         ev = EvaluacionSaludCreate(
             alumno_id=1,
-            profesional_id=2,
             peso_kg=75.5,
             altura_cm=175.0,
-            imc=24.6,
             grasa_corporal=18.5,
             objetivo="Perder grasa",
             notas="Buena condición",
         )
         assert ev.peso_kg == 75.5
 
-    def test_peso_must_be_positive(self):
+    def test_peso_below_min(self):
         with pytest.raises(ValidationError, match="peso_kg"):
             EvaluacionSaludCreate(
-                alumno_id=1, profesional_id=2, peso_kg=-1
+                alumno_id=1, peso_kg=10, altura_cm=170
             )
 
     def test_peso_max(self):
         with pytest.raises(ValidationError, match="peso_kg"):
             EvaluacionSaludCreate(
-                alumno_id=1, profesional_id=2, peso_kg=501
+                alumno_id=1, peso_kg=301, altura_cm=170
             )
 
-    def test_altura_must_be_positive(self):
+    def test_altura_below_min(self):
         with pytest.raises(ValidationError, match="altura_cm"):
             EvaluacionSaludCreate(
-                alumno_id=1, profesional_id=2, altura_cm=0
+                alumno_id=1, peso_kg=70, altura_cm=40
             )
 
     def test_altura_max(self):
         with pytest.raises(ValidationError, match="altura_cm"):
             EvaluacionSaludCreate(
-                alumno_id=1, profesional_id=2, altura_cm=301
+                alumno_id=1, peso_kg=70, altura_cm=251
             )
 
     def test_grasa_corporal_range(self):
         with pytest.raises(ValidationError, match="grasa_corporal"):
             EvaluacionSaludCreate(
-                alumno_id=1, profesional_id=2, grasa_corporal=101
+                alumno_id=1, peso_kg=70, altura_cm=170, grasa_corporal=101
             )
 
     def test_grasa_corporal_zero_valid(self):
         ev = EvaluacionSaludCreate(
-            alumno_id=1, profesional_id=2, grasa_corporal=0
+            alumno_id=1, peso_kg=70, altura_cm=170, grasa_corporal=0
         )
         assert ev.grasa_corporal == 0
 

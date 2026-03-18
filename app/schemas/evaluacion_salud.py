@@ -5,10 +5,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class EvaluacionSaludCreate(BaseModel):
     alumno_id: int = Field(gt=0)
-    profesional_id: int = Field(gt=0)
-    peso_kg: float | None = Field(default=None, gt=0, le=500)
-    altura_cm: float | None = Field(default=None, gt=0, le=300)
-    imc: float | None = Field(default=None, gt=0, le=100)
+    peso_kg: float = Field(ge=20, le=300)
+    altura_cm: float = Field(ge=50, le=250)
     grasa_corporal: float | None = Field(default=None, ge=0, le=100)
     objetivo: str | None = None
     notas: str | None = None
