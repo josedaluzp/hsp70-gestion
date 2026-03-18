@@ -1,6 +1,38 @@
 .worktrees/
 .tareas/tareas.db
 .tareas/events/processed/
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
 .venv/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Database
+*.db
+*.db-wal
+*.db-shm
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Type checking
+.mypy_cache/
