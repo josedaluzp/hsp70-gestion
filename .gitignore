@@ -1,0 +1,6 @@
+.worktrees/
+.tareas/tareas.db
+.tareas/events/processed/
+__pycache__/
+*.pyc
+.venv/
