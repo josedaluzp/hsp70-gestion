@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError
@@ -6,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.security import decode_token
+from app.models.enums import RolUsuario
 from app.models.usuario import Usuario
 
 bearer_scheme = HTTPBearer()
@@ -53,3 +56,26 @@ async def get_current_active_user(
             detail="Inactive user",
         )
     return user
+
+
+def require_role(*roles: RolUsuario) -> Callable:
+    """Dependency factory that checks the current user has one of the allowed roles.
+
+    Admin always passes regardless of the roles specified.
+    Returns 403 if the user's role is not sufficient.
+    """
+    allowed = set(roles)
+
+    async def _check_role(
+        user: Usuario = Depends(get_current_active_user),
+    ) -> Usuario:
+        if user.rol == RolUsuario.ADMIN:
+            return user
+        if user.rol not in allowed:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Role '{user.rol.value}' does not have access to this resource",
+            )
+        return user
+
+    return _check_role
