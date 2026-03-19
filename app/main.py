@@ -12,6 +12,7 @@ from app.api.planes import router as planes_router
 from app.api.turnos import router as turnos_router
 from app.api.reportes import router as reportes_router
 from app.api.usuarios import router as usuarios_router
+from app.api.vencimientos import router as vencimientos_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -41,6 +42,7 @@ app.include_router(planes_router)
 app.include_router(reportes_router)
 app.include_router(turnos_router)
 app.include_router(usuarios_router)
+app.include_router(vencimientos_router)
 
 
 @app.get("/health")
