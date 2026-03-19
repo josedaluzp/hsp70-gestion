@@ -23,6 +23,14 @@ class PagoCreate(BaseModel):
         return v
 
 
+class PagoUpdate(BaseModel):
+    estado: EstadoPago | None = None
+    monto: float | None = Field(default=None, gt=0)
+    fecha_vencimiento: date | None = None
+    metodo_pago: MetodoPago | None = None
+    mp_payment_id: str | None = Field(default=None, max_length=100)
+
+
 class PagoRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -35,3 +43,11 @@ class PagoRead(BaseModel):
     estado: EstadoPago
     mp_payment_id: str | None
     metodo_pago: MetodoPago
+
+
+class PagoList(BaseModel):
+    items: list[PagoRead]
+    total: int
+    page: int
+    page_size: int
+    pages: int

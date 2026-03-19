@@ -7,6 +7,7 @@ from app.api.auth import router as auth_router
 from app.api.evaluaciones import router as evaluaciones_router
 from app.api.inscripciones import router as inscripciones_router
 from app.api.notificaciones import router as notificaciones_router
+from app.api.pagos import router as pagos_router
 from app.api.planes import router as planes_router
 from app.api.turnos import router as turnos_router
 from app.api.reportes import router as reportes_router
@@ -35,6 +36,7 @@ app.include_router(asistencias_router)
 app.include_router(evaluaciones_router)
 app.include_router(inscripciones_router)
 app.include_router(notificaciones_router)
+app.include_router(pagos_router)
 app.include_router(planes_router)
 app.include_router(reportes_router)
 app.include_router(turnos_router)
