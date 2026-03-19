@@ -11,6 +11,7 @@ import Actividades from "./pages/admin/Actividades";
 import Turnos from "./pages/admin/Turnos";
 import Planes from "./pages/admin/Planes";
 import Notificaciones from "./pages/admin/Notificaciones";
+import Reportes from "./pages/admin/Reportes";
 import ProfesorDashboard from "./pages/profesor/Dashboard";
 import ProfesorTurnos from "./pages/profesor/Turnos";
 import ProfesorAsistencia from "./pages/profesor/Asistencia";
@@ -36,7 +37,7 @@ export default function App() {
               <Route index element={<Dashboard />} />
               <Route path="pacientes" element={<Placeholder title="Pacientes" />} />
               <Route path="agenda" element={<Placeholder title="Agenda" />} />
-              <Route path="reportes" element={<Placeholder title="Reportes" />} />
+              <Route path="reportes" element={<Reportes />} />
 
               {/* Alumno routes */}
               <Route element={<ProtectedRoute allowedRoles={["alumno"]} />}>
