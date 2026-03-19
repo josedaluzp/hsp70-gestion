@@ -15,6 +15,11 @@ import ProfesorDashboard from "./pages/profesor/Dashboard";
 import ProfesorTurnos from "./pages/profesor/Turnos";
 import ProfesorAsistencia from "./pages/profesor/Asistencia";
 import ProfesorEvaluaciones from "./pages/profesor/Evaluaciones";
+import AlumnoDashboard from "./pages/alumno/Dashboard";
+import AlumnoActividades from "./pages/alumno/Actividades";
+import AlumnoInscripciones from "./pages/alumno/Inscripciones";
+import AlumnoPagos from "./pages/alumno/Pagos";
+import AlumnoPerfil from "./pages/alumno/Perfil";
 
 export default function App() {
   return (
@@ -32,6 +37,15 @@ export default function App() {
               <Route path="pacientes" element={<Placeholder title="Pacientes" />} />
               <Route path="agenda" element={<Placeholder title="Agenda" />} />
               <Route path="reportes" element={<Placeholder title="Reportes" />} />
+
+              {/* Alumno routes */}
+              <Route element={<ProtectedRoute allowedRoles={["alumno"]} />}>
+                <Route path="alumno/dashboard" element={<AlumnoDashboard />} />
+                <Route path="alumno/actividades" element={<AlumnoActividades />} />
+                <Route path="alumno/inscripciones" element={<AlumnoInscripciones />} />
+                <Route path="alumno/pagos" element={<AlumnoPagos />} />
+                <Route path="alumno/perfil" element={<AlumnoPerfil />} />
+              </Route>
 
               {/* Profesor routes */}
               <Route element={<ProtectedRoute allowedRoles={["profesor"]} />}>
