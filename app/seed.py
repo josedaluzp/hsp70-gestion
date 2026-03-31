@@ -5,6 +5,7 @@ Usage: python -m app.seed
 
 import asyncio
 import random
+import unicodedata
 from datetime import date, datetime, time, timedelta, timezone
 
 from sqlalchemy import select
@@ -237,8 +238,14 @@ TURNOS_TEMPLATE = [
 # Helper functions
 # ---------------------------------------------------------------------------
 
+def _strip_accents(text: str) -> str:
+    """Remove diacritical marks (accents) from text."""
+    nfkd = unicodedata.normalize("NFKD", text)
+    return "".join(c for c in nfkd if not unicodedata.category(c).startswith("M"))
+
+
 def _make_user(data: dict, rol: RolUsuario) -> Usuario:
-    email = data.get("email") or f"{data['nombre'].lower()}.{data['apellido'].lower()}@email.com"
+    email = data.get("email") or f"{_strip_accents(data['nombre']).lower()}.{_strip_accents(data['apellido']).lower()}@email.com"
     return Usuario(
         nombre=data["nombre"],
         apellido=data["apellido"],
