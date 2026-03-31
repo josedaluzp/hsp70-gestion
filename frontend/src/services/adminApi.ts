@@ -229,3 +229,21 @@ export const reportes = {
   alumnoFichaPdf: (alumnoId: number) =>
     api.get(`/reportes/alumno/${alumnoId}/pdf`, { responseType: "blob" }),
 };
+
+// ─── Stats ──────────────────────────────────────────────────────────────────
+
+export interface DashboardStats {
+  total_alumnos: number;
+  alumnos_activos: number;
+  total_profesores: number;
+  total_actividades: number;
+  turnos_hoy: number;
+  pagos_pendientes: number;
+  pagos_vencidos: number;
+  ingresos_mes: number;
+  inscripciones_activas: number;
+}
+
+export const stats = {
+  dashboard: () => api.get<DashboardStats>("/stats/dashboard"),
+};
