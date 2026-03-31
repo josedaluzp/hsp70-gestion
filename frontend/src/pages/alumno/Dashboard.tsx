@@ -76,11 +76,11 @@ export default function AlumnoDashboard() {
   }, [user]);
 
   const turnosHoy = misInscripciones.filter(
-    (i) => i.dia_semana === hoy && i.estado === "ACTIVA",
+    (i) => i.dia_semana === hoy && i.estado === "activa",
   );
 
   const totalActivas = misInscripciones.filter(
-    (i) => i.estado === "ACTIVA",
+    (i) => i.estado === "activa",
   ).length;
 
   if (loading) {
@@ -125,7 +125,7 @@ export default function AlumnoDashboard() {
         />
         <StatCard
           label="Actividades"
-          value={new Set(misInscripciones.filter((i) => i.estado === "ACTIVA").map((i) => i.nombre_actividad)).size}
+          value={new Set(misInscripciones.filter((i) => i.estado === "activa").map((i) => i.nombre_actividad)).size}
           color="default"
         />
       </div>

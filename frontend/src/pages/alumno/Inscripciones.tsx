@@ -27,9 +27,9 @@ function formatDate(dateStr: string): string {
 }
 
 const ESTADO_BADGE: Record<string, { label: string; variant: "success" | "warning" | "danger" | "default" }> = {
-  ACTIVA: { label: "Activa", variant: "success" },
-  CANCELADA: { label: "Cancelada", variant: "danger" },
-  LISTA_ESPERA: { label: "Lista de espera", variant: "warning" },
+  activa: { label: "Activa", variant: "success" },
+  cancelada: { label: "Cancelada", variant: "danger" },
+  lista_espera: { label: "Lista de espera", variant: "warning" },
 };
 
 export default function AlumnoInscripciones() {
@@ -202,7 +202,7 @@ export default function AlumnoInscripciones() {
                             {formatDate(insc.fecha_inscripcion)}
                           </td>
                           <td className="px-5 py-4 text-right">
-                            {insc.estado === "ACTIVA" && (
+                            {insc.estado === "activa" && (
                               <Button
                                 size="sm"
                                 variant="danger"
@@ -248,7 +248,7 @@ export default function AlumnoInscripciones() {
                     </p>
                     <p>Inscripto el {formatDate(insc.fecha_inscripcion)}</p>
                   </div>
-                  {insc.estado === "ACTIVA" && (
+                  {insc.estado === "activa" && (
                     <div className="mt-3 pt-3 border-t border-neutral-100">
                       <Button
                         size="sm"

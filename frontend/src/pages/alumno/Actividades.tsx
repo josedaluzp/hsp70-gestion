@@ -14,7 +14,7 @@ import {
   turnosAlumno,
   inscripciones,
 } from "../../services/alumnoApi";
-import type { Actividad, Turno } from "../../services/adminApi";
+import type { Actividad } from "../../services/adminApi";
 import type { TurnoDetail } from "../../services/profesorApi";
 
 const DIAS_SEMANA: Record<string, string> = {

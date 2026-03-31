@@ -141,7 +141,7 @@ export default function Usuarios() {
   const [togglingId, setTogglingId] = useState<number | null>(null);
 
   // Debounce ref
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // ── Debounced search ─────────────────────────────────────────────────────
 
@@ -517,7 +517,7 @@ export default function Usuarios() {
           <>
             <Table<User>
               columns={columns}
-              data={userList as unknown as (User & Record<string, unknown>)[]}
+              data={userList}
               keyExtractor={(user) => user.id}
             />
             <div className="border-t border-neutral-100 px-4 py-3">

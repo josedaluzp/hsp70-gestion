@@ -45,6 +45,18 @@ app.include_router(usuarios_router)
 app.include_router(vencimientos_router)
 
 
+@app.on_event("startup")
+async def on_startup():
+    from app.core.database import Base, engine
+    from app.models import (  # noqa: F401
+        Actividad, Asistencia, EvaluacionSalud, Inscripcion,
+        ListaEspera, Notificacion, Pago, Plan, Turno, Usuario,
+    )
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "version": settings.APP_VERSION}

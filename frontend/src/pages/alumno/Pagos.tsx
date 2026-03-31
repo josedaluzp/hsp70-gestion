@@ -33,16 +33,16 @@ function formatCurrency(amount: number): string {
 }
 
 const ESTADO_PAGO: Record<string, { label: string; variant: "success" | "warning" | "danger" | "default" }> = {
-  APROBADO: { label: "Aprobado", variant: "success" },
-  PENDIENTE: { label: "Pendiente", variant: "warning" },
-  RECHAZADO: { label: "Rechazado", variant: "danger" },
-  VENCIDO: { label: "Vencido", variant: "danger" },
+  aprobado: { label: "Aprobado", variant: "success" },
+  pendiente: { label: "Pendiente", variant: "warning" },
+  rechazado: { label: "Rechazado", variant: "danger" },
+  vencido: { label: "Vencido", variant: "danger" },
 };
 
 const METODO_LABELS: Record<string, string> = {
-  MERCADOPAGO: "Mercado Pago",
-  EFECTIVO: "Efectivo",
-  TRANSFERENCIA: "Transferencia",
+  mercadopago: "Mercado Pago",
+  efectivo: "Efectivo",
+  transferencia: "Transferencia",
 };
 
 export default function AlumnoPagos() {
@@ -82,7 +82,7 @@ export default function AlumnoPagos() {
 
   // Current membership: most recent approved payment
   const membresiaActiva = pagos
-    .filter((p) => p.estado === "APROBADO")
+    .filter((p) => p.estado === "aprobado")
     .sort(
       (a, b) =>
         new Date(b.fecha_vencimiento).getTime() -

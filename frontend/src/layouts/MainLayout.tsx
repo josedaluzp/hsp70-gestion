@@ -1,11 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 interface NavItem {
   to: string;
   label: string;
-  icon: (props: { className?: string }) => JSX.Element;
+  icon: (props: { className?: string }) => ReactNode;
   adminOnly?: boolean;
   section?: string;
 }

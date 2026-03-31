@@ -23,7 +23,7 @@ interface TableProps<T> {
   className?: string;
 }
 
-export default function Table<T extends Record<string, unknown>>({
+export default function Table<T extends object>({
   columns,
   data,
   keyExtractor,
@@ -36,8 +36,8 @@ export default function Table<T extends Record<string, unknown>>({
     if (!sort || onSort) return data;
 
     return [...data].sort((a, b) => {
-      const aVal = a[sort.key];
-      const bVal = b[sort.key];
+      const aVal = (a as Record<string, unknown>)[sort.key];
+      const bVal = (b as Record<string, unknown>)[sort.key];
 
       if (aVal == null && bVal == null) return 0;
       if (aVal == null) return 1;
@@ -92,7 +92,7 @@ export default function Table<T extends Record<string, unknown>>({
                 >
                   {col.render
                     ? col.render(row)
-                    : (row[col.key] as ReactNode)}
+                    : ((row as Record<string, unknown>)[col.key] as ReactNode)}
                 </td>
               ))}
             </tr>
