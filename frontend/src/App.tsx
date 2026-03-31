@@ -12,6 +12,7 @@ import Turnos from "./pages/admin/Turnos";
 import Planes from "./pages/admin/Planes";
 import Notificaciones from "./pages/admin/Notificaciones";
 import Reportes from "./pages/admin/Reportes";
+import AdminDashboard from "./pages/admin/Dashboard";
 import ProfesorDashboard from "./pages/profesor/Dashboard";
 import ProfesorTurnos from "./pages/profesor/Turnos";
 import ProfesorAsistencia from "./pages/profesor/Asistencia";
@@ -35,8 +36,6 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
               <Route index element={<Dashboard />} />
-              <Route path="pacientes" element={<Placeholder title="Pacientes" />} />
-              <Route path="agenda" element={<Placeholder title="Agenda" />} />
               <Route path="reportes" element={<Reportes />} />
 
               {/* Alumno routes */}
@@ -58,6 +57,7 @@ export default function App() {
 
               {/* Admin routes */}
               <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                <Route path="admin/dashboard" element={<AdminDashboard />} />
                 <Route path="admin/usuarios" element={<Usuarios />} />
                 <Route path="admin/actividades" element={<Actividades />} />
                 <Route path="admin/turnos" element={<Turnos />} />
@@ -73,14 +73,5 @@ export default function App() {
         </Routes>
       </AuthProvider>
     </BrowserRouter>
-  );
-}
-
-function Placeholder({ title }: { title: string }) {
-  return (
-    <div>
-      <h1>{title}</h1>
-      <p className="mt-2 text-neutral-500">Sección en construcción.</p>
-    </div>
   );
 }
