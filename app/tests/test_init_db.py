@@ -1,11 +1,9 @@
-import pytest
-
-
 def test_init_db_imports_all_models():
     """Verify init_db.py imports every model so create_all sees them."""
     import app.init_db as mod
 
-    source = open(mod.__file__).read()
+    with open(mod.__file__, encoding="utf-8") as fh:
+        source = fh.read()
     for name in [
         "Actividad", "Asistencia", "Ejercicio", "EvaluacionSalud",
         "Inscripcion", "ListaEspera", "Notificacion", "Pago", "Plan",
