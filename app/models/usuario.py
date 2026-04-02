@@ -47,6 +47,12 @@ class Usuario(Base):
     notificaciones: Mapped[list["Notificacion"]] = relationship(  # noqa: F821
         back_populates="usuario", foreign_keys="Notificacion.usuario_id"
     )
+    rutinas_creadas: Mapped[list["Rutina"]] = relationship(  # noqa: F821
+        back_populates="profesor", foreign_keys="[Rutina.profesor_id]"
+    )
+    rutinas_asignadas: Mapped[list["RutinaAsignacion"]] = relationship(  # noqa: F821
+        back_populates="alumno", foreign_keys="[RutinaAsignacion.alumno_id]"
+    )
 
     def __repr__(self) -> str:
         return f"<Usuario {self.id}: {self.nombre} {self.apellido}>"

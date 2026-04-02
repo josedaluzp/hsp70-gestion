@@ -1,5 +1,6 @@
 from app.models.actividad import Actividad
 from app.models.asistencia import Asistencia
+from app.models.ejercicio import Ejercicio
 from app.models.enums import (
     DiaSemana,
     EstadoInscripcion,
@@ -13,6 +14,7 @@ from app.models.lista_espera import ListaEspera
 from app.models.notificacion import Notificacion
 from app.models.pago import Pago
 from app.models.plan import Plan
+from app.models.rutina import Rutina, RutinaAsignacion, RutinaEjercicio
 from app.models.turno import Turno
 from app.models.usuario import Usuario
 
@@ -20,6 +22,7 @@ __all__ = [
     "Actividad",
     "Asistencia",
     "DiaSemana",
+    "Ejercicio",
     "EstadoInscripcion",
     "EstadoPago",
     "EvaluacionSalud",
@@ -30,6 +33,9 @@ __all__ = [
     "Pago",
     "Plan",
     "RolUsuario",
+    "Rutina",
+    "RutinaAsignacion",
+    "RutinaEjercicio",
     "Turno",
     "Usuario",
 ]
