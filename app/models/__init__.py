@@ -7,6 +7,7 @@ from app.models.enums import (
     EstadoPago,
     MetodoPago,
     RolUsuario,
+    TipoPago,
 )
 from app.models.evaluacion_salud import EvaluacionSalud
 from app.models.inscripcion import Inscripcion
@@ -33,6 +34,7 @@ __all__ = [
     "Pago",
     "Plan",
     "RolUsuario",
+    "TipoPago",
     "Rutina",
     "RutinaAsignacion",
     "RutinaEjercicio",

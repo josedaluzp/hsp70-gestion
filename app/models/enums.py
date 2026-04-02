@@ -27,6 +27,11 @@ class MetodoPago(str, enum.Enum):
     TRANSFERENCIA = "transferencia"
 
 
+class TipoPago(str, enum.Enum):
+    UNICO = "unico"
+    SUSCRIPCION = "suscripcion"
+
+
 class DiaSemana(str, enum.Enum):
     LUNES = "lunes"
     MARTES = "martes"

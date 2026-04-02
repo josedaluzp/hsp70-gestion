@@ -459,3 +459,77 @@ class TestRepr:
         a = Actividad(nombre="Yoga")
         a.id = 1
         assert "Yoga" in repr(a)
+
+
+# ---------------------------------------------------------------------------
+# TipoPago enum and new model fields tests
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_plan_has_precio_suscripcion(db_session):
+    from app.models.plan import Plan
+
+    plan = Plan(
+        nombre="Plan Sub Test",
+        precio=15000.0,
+        precio_suscripcion=12000.0,
+        duracion_dias=30,
+        max_actividades=5,
+    )
+    db_session.add(plan)
+    await db_session.commit()
+    await db_session.refresh(plan)
+    assert plan.precio_suscripcion == 12000.0
+
+
+@pytest.mark.asyncio
+async def test_plan_precio_suscripcion_nullable(db_session):
+    from app.models.plan import Plan
+
+    plan = Plan(
+        nombre="Plan No Sub",
+        precio=15000.0,
+        duracion_dias=30,
+        max_actividades=5,
+    )
+    db_session.add(plan)
+    await db_session.commit()
+    await db_session.refresh(plan)
+    assert plan.precio_suscripcion is None
+
+
+@pytest.mark.asyncio
+async def test_pago_has_tipo_pago_and_subscription_id(db_session):
+    from app.core.security import hash_password
+    from app.models.enums import EstadoPago, MetodoPago, RolUsuario, TipoPago
+    from app.models.pago import Pago
+    from app.models.plan import Plan
+    from app.models.usuario import Usuario
+
+    user = Usuario(
+        nombre="Test", apellido="User", email="modelsub@test.com",
+        password_hash=hash_password("pass"), rol=RolUsuario.ALUMNO,
+    )
+    plan = Plan(nombre="Plan MP", precio=15000.0, duracion_dias=30, max_actividades=5)
+    db_session.add_all([user, plan])
+    await db_session.commit()
+    await db_session.refresh(user)
+    await db_session.refresh(plan)
+
+    from datetime import date, timedelta
+
+    pago = Pago(
+        alumno_id=user.id,
+        plan_id=plan.id,
+        monto=12000.0,
+        fecha_vencimiento=date.today() + timedelta(days=30),
+        metodo_pago=MetodoPago.MERCADOPAGO,
+        tipo_pago=TipoPago.SUSCRIPCION,
+        mp_subscription_id="preapproval_123",
+    )
+    db_session.add(pago)
+    await db_session.commit()
+    await db_session.refresh(pago)
+    assert pago.tipo_pago == TipoPago.SUSCRIPCION
+    assert pago.mp_subscription_id == "preapproval_123"

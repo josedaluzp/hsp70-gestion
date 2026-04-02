@@ -4,7 +4,7 @@ from sqlalchemy import Date, DateTime, ForeignKey, Numeric, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
-from app.models.enums import EstadoPago, MetodoPago
+from app.models.enums import EstadoPago, MetodoPago, TipoPago
 
 
 class Pago(Base):
@@ -21,6 +21,8 @@ class Pago(Base):
     estado: Mapped[EstadoPago] = mapped_column(default=EstadoPago.PENDIENTE)
     mp_payment_id: Mapped[str | None] = mapped_column(String(100))
     metodo_pago: Mapped[MetodoPago]
+    tipo_pago: Mapped[TipoPago] = mapped_column(default=TipoPago.UNICO)
+    mp_subscription_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     # Relationships
     alumno: Mapped["Usuario"] = relationship(  # noqa: F821

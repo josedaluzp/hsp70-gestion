@@ -13,6 +13,9 @@ class Plan(Base):
     precio: Mapped[float] = mapped_column(Numeric(10, 2))
     duracion_dias: Mapped[int] = mapped_column(Integer)
     max_actividades: Mapped[int] = mapped_column(Integer)
+    precio_suscripcion: Mapped[float | None] = mapped_column(
+        Numeric(10, 2), nullable=True, default=None
+    )
 
     # Relationships
     pagos: Mapped[list["Pago"]] = relationship(  # noqa: F821
