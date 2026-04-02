@@ -22,6 +22,10 @@ import AlumnoActividades from "./pages/alumno/Actividades";
 import AlumnoInscripciones from "./pages/alumno/Inscripciones";
 import AlumnoPagos from "./pages/alumno/Pagos";
 import AlumnoPerfil from "./pages/alumno/Perfil";
+import AlumnoRutinas from "./pages/alumno/Rutinas";
+import AlumnoRutinaDetalle from "./pages/alumno/RutinaDetalle";
+import AdminEjercicios from "./pages/admin/Ejercicios";
+import AdminRutinas from "./pages/admin/Rutinas";
 
 export default function App() {
   return (
@@ -45,6 +49,8 @@ export default function App() {
                 <Route path="alumno/inscripciones" element={<AlumnoInscripciones />} />
                 <Route path="alumno/pagos" element={<AlumnoPagos />} />
                 <Route path="alumno/perfil" element={<AlumnoPerfil />} />
+                <Route path="alumno/rutinas" element={<AlumnoRutinas />} />
+                <Route path="alumno/rutinas/:rutinaId" element={<AlumnoRutinaDetalle />} />
               </Route>
 
               {/* Profesor routes */}
@@ -53,6 +59,8 @@ export default function App() {
                 <Route path="profesor/turnos" element={<ProfesorTurnos />} />
                 <Route path="profesor/asistencia" element={<ProfesorAsistencia />} />
                 <Route path="profesor/evaluaciones" element={<ProfesorEvaluaciones />} />
+                <Route path="profesor/ejercicios" element={<AdminEjercicios />} />
+                <Route path="profesor/rutinas" element={<AdminRutinas />} />
               </Route>
 
               {/* Admin routes */}
@@ -62,6 +70,8 @@ export default function App() {
                 <Route path="admin/actividades" element={<Actividades />} />
                 <Route path="admin/turnos" element={<Turnos />} />
                 <Route path="admin/planes" element={<Planes />} />
+                <Route path="admin/ejercicios" element={<AdminEjercicios />} />
+                <Route path="admin/rutinas" element={<AdminRutinas />} />
               </Route>
 
               {/* Notifications - available to all authenticated users */}
