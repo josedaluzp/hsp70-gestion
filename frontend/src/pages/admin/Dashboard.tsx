@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { Card, Spinner, Button } from "../../components/ui";
+import { Spinner } from "../../components/ui";
 import { stats } from "../../services/adminApi";
 import type { DashboardStats } from "../../services/adminApi";
 
