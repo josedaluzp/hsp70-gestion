@@ -453,6 +453,8 @@ class TestPagoRead:
             estado=EstadoPago.PENDIENTE,
             mp_payment_id=None,
             metodo_pago=MetodoPago.EFECTIVO,
+            tipo_pago="unico",
+            mp_subscription_id=None,
         )
         assert pago.id == 1
 
@@ -597,3 +599,62 @@ class TestNotificacionRead:
             fecha=datetime(2024, 1, 1),
         )
         assert notif.id == 1
+
+
+# --- Subscription schema tests ---
+
+
+def test_plan_create_with_precio_suscripcion():
+    from app.schemas.plan import PlanCreate
+
+    data = PlanCreate(
+        nombre="Plan Sub",
+        precio=15000.0,
+        precio_suscripcion=12000.0,
+        duracion_dias=30,
+        max_actividades=5,
+    )
+    assert data.precio_suscripcion == 12000.0
+
+
+def test_plan_create_without_precio_suscripcion():
+    from app.schemas.plan import PlanCreate
+
+    data = PlanCreate(
+        nombre="Plan Normal",
+        precio=15000.0,
+        duracion_dias=30,
+        max_actividades=5,
+    )
+    assert data.precio_suscripcion is None
+
+
+def test_pago_create_with_tipo_pago():
+    from datetime import date, timedelta
+    from app.models.enums import MetodoPago, TipoPago
+    from app.schemas.pago import PagoCreate
+
+    data = PagoCreate(
+        alumno_id=1,
+        plan_id=1,
+        monto=12000.0,
+        fecha_vencimiento=date.today() + timedelta(days=30),
+        metodo_pago=MetodoPago.MERCADOPAGO,
+        tipo_pago=TipoPago.SUSCRIPCION,
+    )
+    assert data.tipo_pago == TipoPago.SUSCRIPCION
+
+
+def test_pago_create_defaults_to_unico():
+    from datetime import date, timedelta
+    from app.models.enums import MetodoPago, TipoPago
+    from app.schemas.pago import PagoCreate
+
+    data = PagoCreate(
+        alumno_id=1,
+        plan_id=1,
+        monto=5000.0,
+        fecha_vencimiento=date.today() + timedelta(days=30),
+        metodo_pago=MetodoPago.EFECTIVO,
+    )
+    assert data.tipo_pago == TipoPago.UNICO

@@ -2,7 +2,7 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.models.enums import EstadoPago, MetodoPago
+from app.models.enums import EstadoPago, MetodoPago, TipoPago
 
 
 class PagoCreate(BaseModel):
@@ -13,6 +13,8 @@ class PagoCreate(BaseModel):
     estado: EstadoPago = EstadoPago.PENDIENTE
     mp_payment_id: str | None = Field(default=None, max_length=100)
     metodo_pago: MetodoPago
+    tipo_pago: TipoPago = TipoPago.UNICO
+    mp_subscription_id: str | None = Field(default=None, max_length=100)
 
     @field_validator("fecha_vencimiento")
     @classmethod
@@ -29,6 +31,8 @@ class PagoUpdate(BaseModel):
     fecha_vencimiento: date | None = None
     metodo_pago: MetodoPago | None = None
     mp_payment_id: str | None = Field(default=None, max_length=100)
+    tipo_pago: TipoPago | None = None
+    mp_subscription_id: str | None = Field(default=None, max_length=100)
 
 
 class PagoRead(BaseModel):
@@ -43,6 +47,8 @@ class PagoRead(BaseModel):
     estado: EstadoPago
     mp_payment_id: str | None
     metodo_pago: MetodoPago
+    tipo_pago: TipoPago
+    mp_subscription_id: str | None
 
 
 class PagoList(BaseModel):
