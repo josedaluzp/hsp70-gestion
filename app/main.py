@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.actividades import router as actividades_router
 from app.api.ejercicios import router as ejercicios_router
+from app.api.mercadopago import router as mercadopago_router
 from app.api.asistencias import router as asistencias_router
 from app.api.auth import router as auth_router
 from app.api.evaluaciones import router as evaluaciones_router
@@ -40,6 +41,7 @@ app.include_router(ejercicios_router)
 app.include_router(asistencias_router)
 app.include_router(evaluaciones_router)
 app.include_router(inscripciones_router)
+app.include_router(mercadopago_router)
 app.include_router(notificaciones_router)
 app.include_router(pagos_router)
 app.include_router(planes_router)
