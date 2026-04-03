@@ -37,7 +37,8 @@ export interface Pago {
   estado: string;
   metodo_pago: string | null;
   mp_payment_id: string | null;
-  nombre_plan: string | null;
+  tipo_pago: string;
+  mp_subscription_id: string | null;
 }
 
 export interface PagoList {
@@ -146,4 +147,17 @@ export const notificacionesAlumno = {
 export const perfil = {
   update: (userId: number, data: PerfilUpdate) =>
     api.put(`/usuarios/${userId}`, data),
+};
+
+// ─── MercadoPago ───────────────────────────────────────────────────────────
+
+export const mercadopago = {
+  crearPreferencia: (planId: number) =>
+    api.post<{ checkout_url: string; pago_id: number }>("/mp/crear-preferencia", { plan_id: planId }),
+
+  crearSuscripcion: (planId: number) =>
+    api.post<{ checkout_url: string; pago_id: number }>("/mp/crear-suscripcion", { plan_id: planId }),
+
+  cancelarSuscripcion: (pagoId: number) =>
+    api.post<{ message: string }>(`/mp/cancelar-suscripcion/${pagoId}`),
 };

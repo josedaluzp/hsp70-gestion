@@ -19,6 +19,7 @@ const emptyForm: PlanForm = {
   nombre: "",
   descripcion: "",
   precio: 0,
+  precio_suscripcion: null,
   duracion_dias: 1,
   max_actividades: 1,
 };
@@ -132,6 +133,7 @@ export default function Planes() {
       nombre: plan.nombre,
       descripcion: plan.descripcion ?? "",
       precio: plan.precio,
+      precio_suscripcion: plan.precio_suscripcion,
       duracion_dias: plan.duracion_dias,
       max_actividades: plan.max_actividades,
     });
@@ -166,6 +168,7 @@ export default function Planes() {
         nombre: form.nombre.trim(),
         descripcion: form.descripcion?.trim() || undefined,
         precio: Number(form.precio),
+        precio_suscripcion: form.precio_suscripcion != null ? Number(form.precio_suscripcion) : null,
         duracion_dias: Number(form.duracion_dias),
         max_actividades: Number(form.max_actividades),
       };
@@ -226,6 +229,15 @@ export default function Planes() {
       sortable: true,
       render: (row) => (
         <span className="font-medium tabular-nums">{formatCurrency(row.precio)}</span>
+      ),
+    },
+    {
+      key: "precio_suscripcion",
+      header: "Precio Suscripción",
+      render: (row) => (
+        <span className="tabular-nums text-neutral-500">
+          {row.precio_suscripcion != null ? formatCurrency(row.precio_suscripcion) : "—"}
+        </span>
       ),
     },
     {
@@ -483,6 +495,37 @@ export default function Planes() {
                 </p>
               )}
             </div>
+          </div>
+
+          {/* Precio suscripción */}
+          <div className="max-w-[calc(50%-0.5rem)]">
+            <label
+              htmlFor="plan-precio-suscripcion"
+              className="mb-1.5 block text-sm font-medium text-neutral-700"
+            >
+              Precio Suscripción ($)
+              <span className="ml-1.5 text-xs font-normal text-neutral-400">(opcional)</span>
+            </label>
+            <input
+              id="plan-precio-suscripcion"
+              type="number"
+              min={0}
+              step="0.01"
+              value={form.precio_suscripcion ?? ""}
+              onChange={(e) =>
+                updateField(
+                  "precio_suscripcion",
+                  e.target.value ? parseFloat(e.target.value) : null
+                )
+              }
+              placeholder="Dejar vacío si no ofrece suscripción"
+              className="
+                block w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm
+                text-neutral-800 placeholder-neutral-400
+                transition-colors duration-150 outline-none
+                focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 focus:ring-offset-0
+              "
+            />
           </div>
 
           {/* Max actividades */}

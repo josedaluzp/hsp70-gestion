@@ -84,6 +84,7 @@ export interface Plan {
   nombre: string;
   descripcion: string | null;
   precio: number;
+  precio_suscripcion: number | null;
   duracion_dias: number;
   max_actividades: number;
 }
@@ -92,6 +93,7 @@ export interface PlanForm {
   nombre: string;
   descripcion?: string;
   precio: number;
+  precio_suscripcion?: number | null;
   duracion_dias: number;
   max_actividades: number;
 }
