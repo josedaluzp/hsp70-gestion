@@ -18,8 +18,7 @@ import ProfesorTurnos from "./pages/profesor/Turnos";
 import ProfesorAsistencia from "./pages/profesor/Asistencia";
 import ProfesorEvaluaciones from "./pages/profesor/Evaluaciones";
 import AlumnoDashboard from "./pages/alumno/Dashboard";
-import AlumnoActividades from "./pages/alumno/Actividades";
-import AlumnoInscripciones from "./pages/alumno/Inscripciones";
+import AlumnoMisClases from "./pages/alumno/MisClases";
 import AlumnoPagos from "./pages/alumno/Pagos";
 import AlumnoPerfil from "./pages/alumno/Perfil";
 import AlumnoRutinas from "./pages/alumno/Rutinas";
@@ -45,8 +44,7 @@ export default function App() {
               {/* Alumno routes */}
               <Route element={<ProtectedRoute allowedRoles={["alumno"]} />}>
                 <Route path="alumno/dashboard" element={<AlumnoDashboard />} />
-                <Route path="alumno/actividades" element={<AlumnoActividades />} />
-                <Route path="alumno/inscripciones" element={<AlumnoInscripciones />} />
+                <Route path="alumno/clases" element={<AlumnoMisClases />} />
                 <Route path="alumno/pagos" element={<AlumnoPagos />} />
                 <Route path="alumno/perfil" element={<AlumnoPerfil />} />
                 <Route path="alumno/rutinas" element={<AlumnoRutinas />} />

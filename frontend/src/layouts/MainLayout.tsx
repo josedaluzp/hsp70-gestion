@@ -17,8 +17,7 @@ const NAV_ITEMS: NavItem[] = [
 
 const ALUMNO_NAV_ITEMS: NavItem[] = [
   { to: "/alumno/dashboard", label: "Mi Panel", icon: DashboardIcon, section: "alumno" },
-  { to: "/alumno/actividades", label: "Actividades", icon: ActivityIcon, section: "alumno" },
-  { to: "/alumno/inscripciones", label: "Mis Inscripciones", icon: CalendarIcon, section: "alumno" },
+  { to: "/alumno/clases", label: "Mis Clases", icon: ActivityIcon, section: "alumno" },
   { to: "/alumno/pagos", label: "Mis Pagos", icon: PlanIcon, section: "alumno" },
   { to: "/alumno/perfil", label: "Mi Perfil", icon: UserProfileIcon, section: "alumno" },
   { to: "/alumno/rutinas", label: "Mis Rutinas", icon: ClipboardDocIcon, section: "alumno" },
