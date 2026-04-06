@@ -5,14 +5,6 @@ import { Spinner } from "../../components/ui";
 import { stats } from "../../services/adminApi";
 import type { DashboardStats } from "../../services/adminApi";
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "ARS",
-    minimumFractionDigits: 0,
-  }).format(amount);
-}
-
 export default function AdminDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -66,7 +58,7 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      {/* Primary stats */}
+      {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Total alumnos"
@@ -74,8 +66,8 @@ export default function AdminDashboard() {
           color="default"
         />
         <StatCard
-          label="Alumnos activos"
-          value={data?.alumnos_activos ?? 0}
+          label="Total profesores"
+          value={data?.total_profesores ?? 0}
           color="primary"
         />
         <StatCard
@@ -84,33 +76,9 @@ export default function AdminDashboard() {
           color="accent"
         />
         <StatCard
-          label="Ingresos del mes"
-          value={formatCurrency(data?.ingresos_mes ?? 0)}
-          color="primary"
-        />
-      </div>
-
-      {/* Secondary stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label="Pagos pendientes"
-          value={data?.pagos_pendientes ?? 0}
-          color="warning"
-        />
-        <StatCard
-          label="Pagos vencidos"
-          value={data?.pagos_vencidos ?? 0}
-          color="danger"
-        />
-        <StatCard
           label="Inscripciones activas"
           value={data?.inscripciones_activas ?? 0}
-          color="accent"
-        />
-        <StatCard
-          label="Total profesores"
-          value={data?.total_profesores ?? 0}
-          color="default"
+          color="primary"
         />
       </div>
 
@@ -143,12 +111,6 @@ export default function AdminDashboard() {
             description="Planes y precios de membresía"
             onClick={() => navigate("/admin/planes")}
             icon={<CreditCardIcon className="h-5 w-5" />}
-          />
-          <QuickAction
-            label="Ver Reportes"
-            description="Exportar datos y estadísticas"
-            onClick={() => navigate("/reportes")}
-            icon={<ChartIcon className="h-5 w-5" />}
           />
         </div>
       </div>
@@ -252,10 +214,3 @@ function CreditCardIcon({ className }: { className?: string }) {
   );
 }
 
-function ChartIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
-    </svg>
-  );
-}
