@@ -1,0 +1,145 @@
+<h2>Detalle de Rutina — Lista de Ejercicios</h2>
+<p class="subtitle">¿Cómo se muestran los ejercicios dentro de una rutina? Al hacer click se abre el video.</p>
+
+<div class="cards">
+  <!-- Option A: Card grid with thumbnails -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f8fafc;border-radius:8px;padding:20px;font-family:system-ui;">
+        <!-- Header -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+          <div style="color:#6366f1;font-size:14px;cursor:pointer;">← Volver</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="width:40px;height:40px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:18px;">💪</span>
+          </div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#1e293b;">Fuerza Upper Body</div>
+            <div style="font-size:11px;color:#94a3b8;">8 ejercicios · Prof. García</div>
+          </div>
+        </div>
+        <!-- Exercise grid with video thumbnails -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:white;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="width:100%;height:55px;background:linear-gradient(135deg,#1e293b,#334155);display:flex;align-items:center;justify-content:center;position:relative;">
+              <div style="width:28px;height:28px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:12px;color:#1e293b;margin-left:2px;">▶</span>
+              </div>
+            </div>
+            <div style="padding:8px 10px;">
+              <div style="font-size:12px;font-weight:600;color:#1e293b;">Press Banca</div>
+            </div>
+          </div>
+          <div style="background:white;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="width:100%;height:55px;background:linear-gradient(135deg,#1e293b,#334155);display:flex;align-items:center;justify-content:center;">
+              <div style="width:28px;height:28px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:12px;color:#1e293b;margin-left:2px;">▶</span>
+              </div>
+            </div>
+            <div style="padding:8px 10px;">
+              <div style="font-size:12px;font-weight:600;color:#1e293b;">Remo con Barra</div>
+            </div>
+          </div>
+          <div style="background:white;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="width:100%;height:55px;background:linear-gradient(135deg,#1e293b,#334155);display:flex;align-items:center;justify-content:center;">
+              <div style="width:28px;height:28px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:12px;color:#1e293b;margin-left:2px;">▶</span>
+              </div>
+            </div>
+            <div style="padding:8px 10px;">
+              <div style="font-size:12px;font-weight:600;color:#1e293b;">Curl Bíceps</div>
+            </div>
+          </div>
+          <div style="background:white;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="width:100%;height:55px;background:linear-gradient(135deg,#1e293b,#334155);display:flex;align-items:center;justify-content:center;">
+              <div style="width:28px;height:28px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:12px;color:#1e293b;margin-left:2px;">▶</span>
+              </div>
+            </div>
+            <div style="padding:8px 10px;">
+              <div style="font-size:12px;font-weight:600;color:#1e293b;">Press Militar</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Grid de Thumbnails</h3>
+      <p>Grilla con miniatura de video oscura y botón play. Más visual, estilo galería. Al clickear se abre modal con video YouTube.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Clean list with play button -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f8fafc;border-radius:8px;padding:20px;font-family:system-ui;">
+        <!-- Header -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+          <div style="color:#6366f1;font-size:14px;cursor:pointer;">← Volver</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="width:40px;height:40px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:18px;">💪</span>
+          </div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#1e293b;">Fuerza Upper Body</div>
+            <div style="font-size:11px;color:#94a3b8;">8 ejercicios · Prof. García</div>
+          </div>
+        </div>
+        <!-- Exercise list -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="background:white;border-radius:10px;padding:12px 14px;border:1px solid #e2e8f0;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="width:14px;font-size:12px;color:#94a3b8;font-weight:600;text-align:center;">1</div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;color:#1e293b;">Press Banca</div>
+            </div>
+            <div style="width:32px;height:32px;background:#6366f1;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="font-size:11px;color:white;margin-left:1px;">▶</span>
+            </div>
+          </div>
+          <div style="background:white;border-radius:10px;padding:12px 14px;border:1px solid #e2e8f0;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="width:14px;font-size:12px;color:#94a3b8;font-weight:600;text-align:center;">2</div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;color:#1e293b;">Remo con Barra</div>
+            </div>
+            <div style="width:32px;height:32px;background:#6366f1;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="font-size:11px;color:white;margin-left:1px;">▶</span>
+            </div>
+          </div>
+          <div style="background:white;border-radius:10px;padding:12px 14px;border:1px solid #e2e8f0;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="width:14px;font-size:12px;color:#94a3b8;font-weight:600;text-align:center;">3</div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;color:#1e293b;">Curl Bíceps</div>
+            </div>
+            <div style="width:32px;height:32px;background:#6366f1;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="font-size:11px;color:white;margin-left:1px;">▶</span>
+            </div>
+          </div>
+          <div style="background:white;border-radius:10px;padding:12px 14px;border:1px solid #e2e8f0;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="width:14px;font-size:12px;color:#94a3b8;font-weight:600;text-align:center;">4</div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;color:#1e293b;">Press Militar</div>
+            </div>
+            <div style="width:32px;height:32px;background:#6366f1;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="font-size:11px;color:white;margin-left:1px;">▶</span>
+            </div>
+          </div>
+          <div style="background:white;border-radius:10px;padding:12px 14px;border:1px solid #e2e8f0;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="width:14px;font-size:12px;color:#94a3b8;font-weight:600;text-align:center;">5</div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;color:#1e293b;">Fondos en Paralelas</div>
+            </div>
+            <div style="width:32px;height:32px;background:#6366f1;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span style="font-size:11px;color:white;margin-left:1px;">▶</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Lista Numerada</h3>
+      <p>Lista ordenada con número, nombre del ejercicio y botón play. Limpio, consistente con el estilo de "Mis Rutinas". Al clickear se abre modal con video YouTube.</p>
+    </div>
+  </div>
+</div>

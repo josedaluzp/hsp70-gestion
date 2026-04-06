@@ -1,0 +1,72 @@
+<h2>Modal de Video del Ejercicio</h2>
+<p class="subtitle">¿Cómo se muestra el video de YouTube al hacer click en un ejercicio?</p>
+
+<div class="cards">
+  <!-- Option A: Centered modal overlay -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0f172a;border-radius:8px;padding:20px;font-family:system-ui;position:relative;min-height:220px;display:flex;align-items:center;justify-content:center;">
+        <!-- Dimmed background -->
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);border-radius:8px;"></div>
+        <!-- Modal -->
+        <div style="position:relative;background:white;border-radius:14px;width:85%;overflow:hidden;box-shadow:0 25px 50px rgba(0,0,0,0.5);">
+          <!-- Close button -->
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;">
+            <div style="font-size:14px;font-weight:700;color:#1e293b;">Press Banca</div>
+            <div style="width:26px;height:26px;background:#f1f5f9;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#64748b;">✕</div>
+          </div>
+          <!-- Video area -->
+          <div style="width:100%;height:120px;background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="width:44px;height:44px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:18px;color:#ef4444;margin-left:3px;">▶</span>
+            </div>
+            <div style="position:absolute;bottom:68px;right:30px;background:rgba(0,0,0,0.7);color:white;font-size:9px;padding:2px 5px;border-radius:3px;">3:45</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Modal Centrado</h3>
+      <p>Overlay oscuro sobre la página. Modal con título arriba, video embebido abajo, botón de cerrar. Clásico y enfocado.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Slide-up panel -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f8fafc;border-radius:8px;padding:20px;font-family:system-ui;position:relative;min-height:220px;display:flex;flex-direction:column;justify-content:flex-end;">
+        <!-- Background list (dimmed) -->
+        <div style="position:absolute;top:20px;left:20px;right:20px;opacity:0.3;">
+          <div style="background:white;border-radius:8px;padding:10px 12px;border:1px solid #e2e8f0;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+            <div style="font-size:10px;color:#94a3b8;">1</div>
+            <div style="font-size:11px;color:#1e293b;">Press Banca</div>
+          </div>
+          <div style="background:white;border-radius:8px;padding:10px 12px;border:1px solid #e2e8f0;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+            <div style="font-size:10px;color:#94a3b8;">2</div>
+            <div style="font-size:11px;color:#1e293b;">Remo con Barra</div>
+          </div>
+        </div>
+        <!-- Slide-up panel -->
+        <div style="background:white;border-radius:16px 16px 8px 8px;box-shadow:0 -10px 40px rgba(0,0,0,0.15);overflow:hidden;">
+          <!-- Handle -->
+          <div style="display:flex;justify-content:center;padding:8px 0 4px 0;">
+            <div style="width:36px;height:4px;background:#e2e8f0;border-radius:2px;"></div>
+          </div>
+          <div style="padding:4px 16px 8px 16px;">
+            <div style="font-size:14px;font-weight:700;color:#1e293b;">Press Banca</div>
+          </div>
+          <!-- Video -->
+          <div style="width:100%;height:110px;background:#000;display:flex;align-items:center;justify-content:center;">
+            <div style="width:44px;height:44px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:18px;color:#ef4444;margin-left:3px;">▶</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Panel Deslizable</h3>
+      <p>Panel que sube desde abajo (estilo mobile). La lista queda visible atrás. Más moderno, natural en mobile y desktop.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,117 @@
+Lanzando coordinator para hsp70-gestion
+  Max agentes: 3
+  Test command: (ninguno)
+
+elevenlabs: failed to send notification
+Traceback (most recent call last):
+  File "C:\Users\PC\Jose\sistema-gestion-de-tareas\src\tareas_notify\channels\elevenlabs.py", line 50, in send
+    for chunk in audio:
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\client.py", line 157, in convert
+    with self._raw_client.convert(
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 204, in convert
+    yield _stream()
+          ^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 202, in _stream
+    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+elevenlabs.core.api_error.ApiError: headers: {'date': 'Thu, 19 Mar 2026 13:35:33 GMT', 'server': 'uvicorn', 'content-length': '200', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=1800;', 'x-trace-id': 'ff20b5f80d2974fc619bb7781e41dce1', 'x-region': 'us-central1', 'via': '1.1 google', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your API key (claude-notifications) quota of 1000. You have 0 credits remaining, while 83 credits are required for this request.'}}
+elevenlabs: failed to send notification
+Traceback (most recent call last):
+  File "C:\Users\PC\Jose\sistema-gestion-de-tareas\src\tareas_notify\channels\elevenlabs.py", line 50, in send
+    for chunk in audio:
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\client.py", line 157, in convert
+    with self._raw_client.convert(
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 204, in convert
+    yield _stream()
+          ^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 202, in _stream
+    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+elevenlabs.core.api_error.ApiError: headers: {'date': 'Thu, 19 Mar 2026 13:35:34 GMT', 'server': 'uvicorn', 'content-length': '200', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=1800;', 'x-trace-id': '4d85a36c4f963b5e7b986ebfa5bc1f80', 'x-region': 'us-central1', 'via': '1.1 google', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your API key (claude-notifications) quota of 1000. You have 0 credits remaining, while 75 credits are required for this request.'}}
+elevenlabs: failed to send notification
+Traceback (most recent call last):
+  File "C:\Users\PC\Jose\sistema-gestion-de-tareas\src\tareas_notify\channels\elevenlabs.py", line 50, in send
+    for chunk in audio:
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\client.py", line 157, in convert
+    with self._raw_client.convert(
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 204, in convert
+    yield _stream()
+          ^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 202, in _stream
+    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+elevenlabs.core.api_error.ApiError: headers: {'date': 'Thu, 19 Mar 2026 13:39:28 GMT', 'server': 'uvicorn', 'content-length': '200', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=1800;', 'x-trace-id': '8dd1f6749450cf0c1fbab6ed22446c9c', 'x-region': 'us-central1', 'via': '1.1 google', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your API key (claude-notifications) quota of 1000. You have 0 credits remaining, while 70 credits are required for this request.'}}
+elevenlabs: failed to send notification
+Traceback (most recent call last):
+  File "C:\Users\PC\Jose\sistema-gestion-de-tareas\src\tareas_notify\channels\elevenlabs.py", line 50, in send
+    for chunk in audio:
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\client.py", line 157, in convert
+    with self._raw_client.convert(
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 204, in convert
+    yield _stream()
+          ^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 202, in _stream
+    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+elevenlabs.core.api_error.ApiError: headers: {'date': 'Thu, 19 Mar 2026 13:42:56 GMT', 'server': 'uvicorn', 'content-length': '200', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=1800;', 'x-trace-id': 'db9d51ce2000de10f4df6fa79ef9421d', 'x-region': 'us-central1', 'via': '1.1 google', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your API key (claude-notifications) quota of 1000. You have 0 credits remaining, while 64 credits are required for this request.'}}
+elevenlabs: failed to send notification
+Traceback (most recent call last):
+  File "C:\Users\PC\Jose\sistema-gestion-de-tareas\src\tareas_notify\channels\elevenlabs.py", line 50, in send
+    for chunk in audio:
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\client.py", line 157, in convert
+    with self._raw_client.convert(
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 204, in convert
+    yield _stream()
+          ^^^^^^^^^
+  File "C:\Users\PC\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\elevenlabs\text_to_speech\raw_client.py", line 202, in _stream
+    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+elevenlabs.core.api_error.ApiError: headers: {'date': 'Thu, 19 Mar 2026 13:42:57 GMT', 'server': 'uvicorn', 'content-length': '200', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=1800;', 'x-trace-id': '09448b72abbb1ab1d35dd4b3a11d926f', 'x-region': 'us-central1', 'via': '1.1 google', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your API key (claude-notifications) quota of 1000. You have 0 credits remaining, while 54 credits are required for this request.'}}
+[Coordinator] Starting. Project: C:\Users\PC\Jose\hsp70-gestion
+[Coordinator] Dispatched api-designer for task #28: Implementar CRUD de pagos y registro manual
+[Coordinator] Dispatched api-designer for task #31: Implementar CRUD de lista de espera
+[Coordinator] Dispatched api-designer for task #33: Implementar vista de registro y búsqueda de alumnos
+[Coordinator] Agent failed on task #31: 
+[Coordinator] Retrying task #31
+[Coordinator] Dispatched api-designer for task #31: Implementar CRUD de lista de espera
+[Coordinator] Agent failed on task #28: 
+[Coordinator] Retrying task #28
+[Coordinator] Dispatched api-designer for task #28: Implementar CRUD de pagos y registro manual
+[Coordinator] Agent failed on task #28: 
+[Coordinator] Escalating task #28 to debugger
+[Coordinator] Dispatched debugger for task #28: Implementar CRUD de pagos y registro manual
+[Coordinator] Agent failed on task #31: 
+[Coordinator] Escalating task #31 to debugger
+[Coordinator] Dispatched debugger for task #31: Implementar CRUD de lista de espera
+[Coordinator] Agent failed on task #28: 
+[Coordinator] Task #28 BLOCKED after max retries
+[Coordinator] Agent failed on task #31: 
+[Coordinator] Task #31 BLOCKED after max retries
+[Coordinator] Agent completed task #33
+[Coordinator] Task #33 merged to develop
+[Coordinator] Dispatched api-designer for task #34: Implementar vista de inscripciones y check-in
+[Coordinator] Agent completed task #34
+[Coordinator] Task #34 merged to develop
+
+[Coordinator] All tasks processed for hsp70-gestion
+  Total tareas: 34
+    pending: 4
+    in_progress: 0
+    pr_open: 0
+    pr_failed: 0
+    done: 25
+    blocked: 2
+    cancelled: 3
+  Vencidas: 0
+  Proyectos: 1
+  Etiquetas: 3
