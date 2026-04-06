@@ -12,23 +12,21 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { to: "/", label: "Dashboard", icon: DashboardIcon },
-  { to: "/notificaciones", label: "Notificaciones", icon: BellIcon },
 ];
 
 const ALUMNO_NAV_ITEMS: NavItem[] = [
   { to: "/alumno/dashboard", label: "Mi Panel", icon: DashboardIcon, section: "alumno" },
-  { to: "/alumno/clases", label: "Mis Clases", icon: ActivityIcon, section: "alumno" },
-  { to: "/alumno/pagos", label: "Mis Pagos", icon: PlanIcon, section: "alumno" },
+  { to: "/alumno/clases", label: "Mis Clases", icon: CalendarIcon, section: "alumno" },
+  { to: "/alumno/planes", label: "Planes", icon: PlanIcon, section: "alumno" },
+  { to: "/alumno/rutinas", label: "Mi Rutina", icon: ClipboardDocIcon, section: "alumno" },
   { to: "/alumno/perfil", label: "Mi Perfil", icon: UserProfileIcon, section: "alumno" },
-  { to: "/alumno/rutinas", label: "Mis Rutinas", icon: ClipboardDocIcon, section: "alumno" },
 ];
 
 const PROFESOR_NAV_ITEMS: NavItem[] = [
   { to: "/profesor/dashboard", label: "Mi Panel", icon: DashboardIcon, section: "profesor" },
-  { to: "/profesor/turnos", label: "Mis Turnos", icon: CalendarIcon, section: "profesor" },
+  { to: "/profesor/turnos", label: "Mis Clases", icon: CalendarIcon, section: "profesor" },
   { to: "/profesor/asistencia", label: "Asistencia", icon: CheckCircleIcon, section: "profesor" },
   { to: "/profesor/evaluaciones", label: "Evaluaciones", icon: ClipboardDocIcon, section: "profesor" },
-  { to: "/profesor/ejercicios", label: "Ejercicios", icon: ActivityIcon, section: "profesor" },
   { to: "/profesor/rutinas", label: "Rutinas", icon: ClipboardDocIcon, section: "profesor" },
 ];
 
@@ -38,9 +36,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { to: "/admin/actividades", label: "Actividades", icon: ActivityIcon, adminOnly: true, section: "admin" },
   { to: "/admin/turnos", label: "Turnos", icon: CalendarIcon, adminOnly: true, section: "admin" },
   { to: "/admin/planes", label: "Planes", icon: PlanIcon, adminOnly: true, section: "admin" },
-  { to: "/admin/ejercicios", label: "Ejercicios", icon: ActivityIcon, adminOnly: true, section: "admin" },
   { to: "/admin/rutinas", label: "Rutinas", icon: ClipboardDocIcon, adminOnly: true, section: "admin" },
-  { to: "/reportes", label: "Reportes", icon: ChartIcon, adminOnly: true, section: "admin" },
 ];
 
 export default function MainLayout() {
