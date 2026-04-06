@@ -1,6 +1,6 @@
 """Tests for admin dashboard stats endpoint."""
 
-from datetime import date, time, timedelta
+from datetime import date, time
 
 import pytest
 
@@ -9,13 +9,9 @@ from app.models.actividad import Actividad
 from app.models.enums import (
     DiaSemana,
     EstadoInscripcion,
-    EstadoPago,
-    MetodoPago,
     RolUsuario,
 )
 from app.models.inscripcion import Inscripcion
-from app.models.pago import Pago
-from app.models.plan import Plan
 from app.models.turno import Turno
 from app.models.usuario import Usuario
 from app.services.stats_service import WEEKDAY_MAP
@@ -71,17 +67,6 @@ async def _create_actividad(db, *, nombre="Yoga Stats"):
     return act
 
 
-async def _create_plan(db, *, nombre="Plan Stats"):
-    plan = Plan(
-        nombre=nombre, descripcion="Test plan",
-        precio=5000, duracion_dias=30, max_actividades=2,
-    )
-    db.add(plan)
-    await db.commit()
-    await db.refresh(plan)
-    return plan
-
-
 async def _create_turno(db, *, actividad_id, profesor_id, dia=DiaSemana.LUNES):
     turno = Turno(
         actividad_id=actividad_id, profesor_id=profesor_id,
@@ -92,18 +77,6 @@ async def _create_turno(db, *, actividad_id, profesor_id, dia=DiaSemana.LUNES):
     await db.commit()
     await db.refresh(turno)
     return turno
-
-
-async def _create_pago(db, *, alumno_id, plan_id, estado=EstadoPago.APROBADO, days_offset=0):
-    pago = Pago(
-        alumno_id=alumno_id, plan_id=plan_id, monto=5000,
-        fecha_vencimiento=date.today() + timedelta(days=days_offset),
-        estado=estado, metodo_pago=MetodoPago.EFECTIVO,
-    )
-    db.add(pago)
-    await db.commit()
-    await db.refresh(pago)
-    return pago
 
 
 async def _create_inscripcion(db, *, alumno_id, turno_id, estado=EstadoInscripcion.ACTIVA):
@@ -155,13 +128,9 @@ class TestDashboardStatsEmpty:
         assert r.status_code == 200
         data = r.json()
         assert data["total_alumnos"] == 0
-        assert data["alumnos_activos"] == 0
         assert data["total_profesores"] == 0
         assert data["total_actividades"] == 0
         assert data["turnos_hoy"] == 0
-        assert data["pagos_pendientes"] == 0
-        assert data["pagos_vencidos"] == 0
-        assert data["ingresos_mes"] == 0.0
         assert data["inscripciones_activas"] == 0
 
 
@@ -179,28 +148,6 @@ class TestDashboardStatsWithData:
         data = r.json()
         assert data["total_alumnos"] == 2
         assert data["total_profesores"] == 1
-
-    @pytest.mark.asyncio
-    async def test_alumnos_activos(self, client, db_session):
-        admin = await _create_admin(db_session)
-        plan = await _create_plan(db_session)
-        a1 = await _create_alumno(db_session, email="active1@test.com")
-        a2 = await _create_alumno(db_session, email="active2@test.com")
-        a3 = await _create_alumno(db_session, email="expired@test.com")
-
-        # a1: approved, not expired
-        await _create_pago(db_session, alumno_id=a1.id, plan_id=plan.id,
-                           estado=EstadoPago.APROBADO, days_offset=15)
-        # a2: approved, not expired
-        await _create_pago(db_session, alumno_id=a2.id, plan_id=plan.id,
-                           estado=EstadoPago.APROBADO, days_offset=10)
-        # a3: approved but expired
-        await _create_pago(db_session, alumno_id=a3.id, plan_id=plan.id,
-                           estado=EstadoPago.APROBADO, days_offset=-5)
-
-        r = await client.get("/api/stats/dashboard", headers=_auth(admin))
-        data = r.json()
-        assert data["alumnos_activos"] == 2
 
     @pytest.mark.asyncio
     async def test_total_actividades(self, client, db_session):
@@ -239,38 +186,6 @@ class TestDashboardStatsWithData:
         assert data["turnos_hoy"] == 1
 
     @pytest.mark.asyncio
-    async def test_pagos_pendientes_y_vencidos(self, client, db_session):
-        admin = await _create_admin(db_session)
-        alumno = await _create_alumno(db_session)
-        plan = await _create_plan(db_session)
-
-        await _create_pago(db_session, alumno_id=alumno.id, plan_id=plan.id,
-                           estado=EstadoPago.PENDIENTE)
-        await _create_pago(db_session, alumno_id=alumno.id, plan_id=plan.id,
-                           estado=EstadoPago.PENDIENTE)
-        await _create_pago(db_session, alumno_id=alumno.id, plan_id=plan.id,
-                           estado=EstadoPago.VENCIDO)
-
-        r = await client.get("/api/stats/dashboard", headers=_auth(admin))
-        data = r.json()
-        assert data["pagos_pendientes"] == 2
-        assert data["pagos_vencidos"] == 1
-
-    @pytest.mark.asyncio
-    async def test_ingresos_mes(self, client, db_session):
-        admin = await _create_admin(db_session)
-        alumno = await _create_alumno(db_session)
-        plan = await _create_plan(db_session)
-
-        # Approved payment this month (created now via server_default)
-        await _create_pago(db_session, alumno_id=alumno.id, plan_id=plan.id,
-                           estado=EstadoPago.APROBADO, days_offset=15)
-
-        r = await client.get("/api/stats/dashboard", headers=_auth(admin))
-        data = r.json()
-        assert data["ingresos_mes"] == 5000.0
-
-    @pytest.mark.asyncio
     async def test_inscripciones_activas(self, client, db_session):
         admin = await _create_admin(db_session)
         alumno = await _create_alumno(db_session)
@@ -299,8 +214,7 @@ class TestDashboardStatsWithData:
         assert r.status_code == 200
         data = r.json()
         expected_keys = {
-            "total_alumnos", "alumnos_activos", "total_profesores",
-            "total_actividades", "turnos_hoy", "pagos_pendientes",
-            "pagos_vencidos", "ingresos_mes", "inscripciones_activas",
+            "total_alumnos", "total_profesores",
+            "total_actividades", "turnos_hoy", "inscripciones_activas",
         }
         assert set(data.keys()) == expected_keys

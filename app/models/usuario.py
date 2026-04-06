@@ -31,9 +31,6 @@ class Usuario(Base):
     inscripciones: Mapped[list["Inscripcion"]] = relationship(  # noqa: F821
         back_populates="alumno", foreign_keys="Inscripcion.alumno_id"
     )
-    pagos: Mapped[list["Pago"]] = relationship(  # noqa: F821
-        back_populates="alumno", foreign_keys="Pago.alumno_id"
-    )
     evaluaciones_como_alumno: Mapped[list["EvaluacionSalud"]] = relationship(  # noqa: F821
         back_populates="alumno", foreign_keys="EvaluacionSalud.alumno_id"
     )

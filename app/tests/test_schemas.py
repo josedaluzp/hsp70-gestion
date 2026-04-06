@@ -6,8 +6,6 @@ from pydantic import ValidationError
 from app.models.enums import (
     DiaSemana,
     EstadoInscripcion,
-    EstadoPago,
-    MetodoPago,
 )
 from app.schemas import (
     ActividadCreate,
@@ -22,8 +20,6 @@ from app.schemas import (
     ListaEsperaRead,
     NotificacionCreate,
     NotificacionRead,
-    PagoCreate,
-    PagoRead,
     PlanCreate,
     PlanRead,
     TurnoCreate,
@@ -393,72 +389,6 @@ class TestPlanRead:
         assert PlanRead.model_config["from_attributes"] is True
 
 
-# --- Pago schemas ---
-
-
-class TestPagoCreate:
-    def test_valid(self):
-        pago = PagoCreate(
-            alumno_id=1,
-            plan_id=1,
-            monto=5000.0,
-            fecha_vencimiento=date(2099, 12, 31),
-            metodo_pago=MetodoPago.EFECTIVO,
-        )
-        assert pago.estado == EstadoPago.PENDIENTE
-
-    def test_monto_positive(self):
-        with pytest.raises(ValidationError, match="monto"):
-            PagoCreate(
-                alumno_id=1,
-                plan_id=1,
-                monto=0,
-                fecha_vencimiento=date(2099, 12, 31),
-                metodo_pago=MetodoPago.EFECTIVO,
-            )
-
-    def test_past_fecha_vencimiento(self):
-        with pytest.raises(ValidationError, match="Due date cannot be in the past"):
-            PagoCreate(
-                alumno_id=1,
-                plan_id=1,
-                monto=5000.0,
-                fecha_vencimiento=date(2000, 1, 1),
-                metodo_pago=MetodoPago.EFECTIVO,
-            )
-
-    def test_invalid_metodo_pago(self):
-        with pytest.raises(ValidationError, match="metodo_pago"):
-            PagoCreate(
-                alumno_id=1,
-                plan_id=1,
-                monto=5000.0,
-                fecha_vencimiento=date(2099, 12, 31),
-                metodo_pago="bitcoin",
-            )
-
-
-class TestPagoRead:
-    def test_from_attributes(self):
-        assert PagoRead.model_config["from_attributes"] is True
-
-    def test_valid_read(self):
-        pago = PagoRead(
-            id=1,
-            alumno_id=1,
-            plan_id=1,
-            monto=5000.0,
-            fecha_pago=datetime(2024, 1, 1),
-            fecha_vencimiento=date(2024, 2, 1),
-            estado=EstadoPago.PENDIENTE,
-            mp_payment_id=None,
-            metodo_pago=MetodoPago.EFECTIVO,
-            tipo_pago="unico",
-            mp_subscription_id=None,
-        )
-        assert pago.id == 1
-
-
 # --- EvaluacionSalud schemas ---
 
 
@@ -601,60 +531,3 @@ class TestNotificacionRead:
         assert notif.id == 1
 
 
-# --- Subscription schema tests ---
-
-
-def test_plan_create_with_precio_suscripcion():
-    from app.schemas.plan import PlanCreate
-
-    data = PlanCreate(
-        nombre="Plan Sub",
-        precio=15000.0,
-        precio_suscripcion=12000.0,
-        duracion_dias=30,
-        max_actividades=5,
-    )
-    assert data.precio_suscripcion == 12000.0
-
-
-def test_plan_create_without_precio_suscripcion():
-    from app.schemas.plan import PlanCreate
-
-    data = PlanCreate(
-        nombre="Plan Normal",
-        precio=15000.0,
-        duracion_dias=30,
-        max_actividades=5,
-    )
-    assert data.precio_suscripcion is None
-
-
-def test_pago_create_with_tipo_pago():
-    from datetime import date, timedelta
-    from app.models.enums import MetodoPago, TipoPago
-    from app.schemas.pago import PagoCreate
-
-    data = PagoCreate(
-        alumno_id=1,
-        plan_id=1,
-        monto=12000.0,
-        fecha_vencimiento=date.today() + timedelta(days=30),
-        metodo_pago=MetodoPago.MERCADOPAGO,
-        tipo_pago=TipoPago.SUSCRIPCION,
-    )
-    assert data.tipo_pago == TipoPago.SUSCRIPCION
-
-
-def test_pago_create_defaults_to_unico():
-    from datetime import date, timedelta
-    from app.models.enums import MetodoPago, TipoPago
-    from app.schemas.pago import PagoCreate
-
-    data = PagoCreate(
-        alumno_id=1,
-        plan_id=1,
-        monto=5000.0,
-        fecha_vencimiento=date.today() + timedelta(days=30),
-        metodo_pago=MetodoPago.EFECTIVO,
-    )
-    assert data.tipo_pago == TipoPago.UNICO

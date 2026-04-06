@@ -8,12 +8,9 @@ from app.models.asistencia import Asistencia
 from app.models.enums import (
     DiaSemana,
     EstadoInscripcion,
-    EstadoPago,
-    MetodoPago,
     RolUsuario,
 )
 from app.models.inscripcion import Inscripcion
-from app.models.pago import Pago
 from app.models.plan import Plan
 from app.models.turno import Turno
 from app.models.usuario import Usuario
@@ -94,21 +91,6 @@ async def _create_plan(db, *, nombre="Plan Básico", max_actividades=2, precio=5
     await db.commit()
     await db.refresh(plan)
     return plan
-
-
-async def _create_membership(db, *, alumno_id, plan_id, days_remaining=30):
-    pago = Pago(
-        alumno_id=alumno_id,
-        plan_id=plan_id,
-        monto=5000,
-        fecha_vencimiento=date.today() + timedelta(days=days_remaining),
-        estado=EstadoPago.APROBADO,
-        metodo_pago=MetodoPago.EFECTIVO,
-    )
-    db.add(pago)
-    await db.commit()
-    await db.refresh(pago)
-    return pago
 
 
 async def _create_inscripcion(db, *, alumno_id, turno_id):

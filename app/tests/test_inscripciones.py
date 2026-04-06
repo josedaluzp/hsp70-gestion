@@ -1,4 +1,4 @@
-from datetime import date, time, timedelta
+from datetime import time
 
 import pytest
 
@@ -7,14 +7,10 @@ from app.models.actividad import Actividad
 from app.models.enums import (
     DiaSemana,
     EstadoInscripcion,
-    EstadoPago,
-    MetodoPago,
     RolUsuario,
 )
 from app.models.inscripcion import Inscripcion
 from app.models.lista_espera import ListaEspera
-from app.models.pago import Pago
-from app.models.plan import Plan
 from app.models.turno import Turno
 from app.models.usuario import Usuario
 
@@ -82,35 +78,6 @@ async def _create_turno(db, *, actividad_id, profesor_id, dia=DiaSemana.LUNES):
     return turno
 
 
-async def _create_plan(db, *, nombre="Plan Básico", max_actividades=2, precio=5000):
-    plan = Plan(
-        nombre=nombre,
-        descripcion="Test plan",
-        precio=precio,
-        duracion_dias=30,
-        max_actividades=max_actividades,
-    )
-    db.add(plan)
-    await db.commit()
-    await db.refresh(plan)
-    return plan
-
-
-async def _create_membership(db, *, alumno_id, plan_id, days_remaining=30):
-    pago = Pago(
-        alumno_id=alumno_id,
-        plan_id=plan_id,
-        monto=5000,
-        fecha_vencimiento=date.today() + timedelta(days=days_remaining),
-        estado=EstadoPago.APROBADO,
-        metodo_pago=MetodoPago.EFECTIVO,
-    )
-    db.add(pago)
-    await db.commit()
-    await db.refresh(pago)
-    return pago
-
-
 def _auth(user):
     token = create_access_token(subject=user.id)
     return {"Authorization": f"Bearer {token}"}
@@ -124,8 +91,6 @@ class TestCrearInscripcion:
     async def test_enroll_success(self, client, db_session):
         alumno = await _create_alumno(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -141,43 +106,9 @@ class TestCrearInscripcion:
         assert data["lista_espera"] is False
 
     @pytest.mark.asyncio
-    async def test_enroll_no_membership(self, client, db_session):
-        alumno = await _create_alumno(db_session)
-        profesor = await _create_profesor(db_session)
-        act = await _create_actividad(db_session)
-        turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
-
-        r = await client.post(
-            "/api/inscripciones",
-            json={"turno_id": turno.id},
-            headers=_auth(alumno),
-        )
-        assert r.status_code == 400
-        assert "active membership" in r.json()["detail"].lower()
-
-    @pytest.mark.asyncio
-    async def test_enroll_expired_membership(self, client, db_session):
-        alumno = await _create_alumno(db_session)
-        profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id, days_remaining=-1)
-        act = await _create_actividad(db_session)
-        turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
-
-        r = await client.post(
-            "/api/inscripciones",
-            json={"turno_id": turno.id},
-            headers=_auth(alumno),
-        )
-        assert r.status_code == 400
-        assert "active membership" in r.json()["detail"].lower()
-
-    @pytest.mark.asyncio
     async def test_enroll_already_enrolled(self, client, db_session):
         alumno = await _create_alumno(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -201,8 +132,6 @@ class TestCrearInscripcion:
     @pytest.mark.asyncio
     async def test_enroll_turno_not_found(self, client, db_session):
         alumno = await _create_alumno(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
 
         r = await client.post(
             "/api/inscripciones",
@@ -215,8 +144,6 @@ class TestCrearInscripcion:
     async def test_enroll_turno_inactive(self, client, db_session):
         alumno = await _create_alumno(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = Turno(
             actividad_id=act.id,
@@ -240,75 +167,14 @@ class TestCrearInscripcion:
         assert "not active" in r.json()["detail"].lower()
 
     @pytest.mark.asyncio
-    async def test_enroll_max_actividades_exceeded(self, client, db_session):
-        alumno = await _create_alumno(db_session)
-        profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session, max_actividades=1)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
-
-        act1 = await _create_actividad(db_session, nombre="Yoga")
-        act2 = await _create_actividad(db_session, nombre="Pilates")
-        turno1 = await _create_turno(db_session, actividad_id=act1.id, profesor_id=profesor.id)
-        turno2 = await _create_turno(
-            db_session, actividad_id=act2.id, profesor_id=profesor.id, dia=DiaSemana.MARTES
-        )
-
-        # Enroll in first activity
-        r = await client.post(
-            "/api/inscripciones",
-            json={"turno_id": turno1.id},
-            headers=_auth(alumno),
-        )
-        assert r.status_code == 201
-
-        # Enroll in second activity - should fail (max 1)
-        r = await client.post(
-            "/api/inscripciones",
-            json={"turno_id": turno2.id},
-            headers=_auth(alumno),
-        )
-        assert r.status_code == 400
-        assert "maximum" in r.json()["detail"].lower()
-
-    @pytest.mark.asyncio
-    async def test_enroll_same_activity_different_turno_allowed(self, client, db_session):
-        """Multiple turnos of the same activity don't count as extra activities."""
-        alumno = await _create_alumno(db_session)
-        profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session, max_actividades=1)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
-
-        act = await _create_actividad(db_session, nombre="Yoga", cupo_maximo=20)
-        turno1 = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
-        turno2 = await _create_turno(
-            db_session, actividad_id=act.id, profesor_id=profesor.id, dia=DiaSemana.MARTES
-        )
-
-        r = await client.post(
-            "/api/inscripciones",
-            json={"turno_id": turno1.id},
-            headers=_auth(alumno),
-        )
-        assert r.status_code == 201
-
-        r = await client.post(
-            "/api/inscripciones",
-            json={"turno_id": turno2.id},
-            headers=_auth(alumno),
-        )
-        assert r.status_code == 201
-
-    @pytest.mark.asyncio
     async def test_enroll_no_cupo_waitlist(self, client, db_session):
         """When no cupo, student is added to waitlist."""
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session, max_actividades=3)
         act = await _create_actividad(db_session, cupo_maximo=1)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
         # Fill the single spot
         alumno1 = await _create_alumno(db_session, email="a1@test.com", nombre="A1")
-        await _create_membership(db_session, alumno_id=alumno1.id, plan_id=plan.id)
         r = await client.post(
             "/api/inscripciones",
             json={"turno_id": turno.id},
@@ -318,7 +184,6 @@ class TestCrearInscripcion:
 
         # Second student → waitlist
         alumno2 = await _create_alumno(db_session, email="a2@test.com", nombre="A2")
-        await _create_membership(db_session, alumno_id=alumno2.id, plan_id=plan.id)
         r = await client.post(
             "/api/inscripciones",
             json={"turno_id": turno.id},
@@ -332,18 +197,15 @@ class TestCrearInscripcion:
     @pytest.mark.asyncio
     async def test_enroll_already_on_waitlist(self, client, db_session):
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session, max_actividades=3)
         act = await _create_actividad(db_session, cupo_maximo=1)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
         # Fill spot
         alumno1 = await _create_alumno(db_session, email="a1@test.com")
-        await _create_membership(db_session, alumno_id=alumno1.id, plan_id=plan.id)
         await client.post("/api/inscripciones", json={"turno_id": turno.id}, headers=_auth(alumno1))
 
         # Waitlist
         alumno2 = await _create_alumno(db_session, email="a2@test.com")
-        await _create_membership(db_session, alumno_id=alumno2.id, plan_id=plan.id)
         await client.post("/api/inscripciones", json={"turno_id": turno.id}, headers=_auth(alumno2))
 
         # Try again → conflict
@@ -365,8 +227,6 @@ class TestCrearInscripcion:
         admin = await _create_admin(db_session)
         alumno = await _create_alumno(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -383,8 +243,6 @@ class TestCrearInscripcion:
         alumno1 = await _create_alumno(db_session, email="a1@test.com")
         alumno2 = await _create_alumno(db_session, email="a2@test.com")
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno2.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -404,8 +262,6 @@ class TestCancelarInscripcion:
     async def test_cancel_own_enrollment(self, client, db_session):
         alumno = await _create_alumno(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -426,8 +282,6 @@ class TestCancelarInscripcion:
     async def test_cancel_already_cancelled(self, client, db_session):
         alumno = await _create_alumno(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -453,8 +307,6 @@ class TestCancelarInscripcion:
         alumno1 = await _create_alumno(db_session, email="a1@test.com")
         alumno2 = await _create_alumno(db_session, email="a2@test.com")
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno1.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -473,8 +325,6 @@ class TestCancelarInscripcion:
         alumno = await _create_alumno(db_session)
         admin = await _create_admin(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -493,8 +343,6 @@ class TestCancelarInscripcion:
         alumno = await _create_alumno(db_session)
         recep = await _create_recepcionista(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -512,14 +360,11 @@ class TestCancelarInscripcion:
     async def test_cancel_promotes_waitlist(self, client, db_session):
         """Cancelling frees a spot and promotes the first waitlisted student."""
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session, max_actividades=3)
         act = await _create_actividad(db_session, cupo_maximo=1)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
         alumno1 = await _create_alumno(db_session, email="a1@test.com")
         alumno2 = await _create_alumno(db_session, email="a2@test.com")
-        await _create_membership(db_session, alumno_id=alumno1.id, plan_id=plan.id)
-        await _create_membership(db_session, alumno_id=alumno2.id, plan_id=plan.id)
 
         # alumno1 enrolls (fills cupo)
         r = await client.post(
@@ -574,12 +419,10 @@ class TestListarInscritos:
     @pytest.mark.asyncio
     async def test_list_inscritos(self, client, db_session):
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
         alumno = await _create_alumno(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         await client.post(
             "/api/inscripciones", json={"turno_id": turno.id}, headers=_auth(alumno)
         )
@@ -597,12 +440,10 @@ class TestListarInscritos:
     @pytest.mark.asyncio
     async def test_list_inscritos_excludes_cancelled(self, client, db_session):
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
         alumno = await _create_alumno(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         r = await client.post(
             "/api/inscripciones", json={"turno_id": turno.id}, headers=_auth(alumno)
         )
@@ -666,8 +507,6 @@ class TestListarInscripcionesAlumno:
     async def test_list_own_inscripciones(self, client, db_session):
         alumno = await _create_alumno(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -688,8 +527,6 @@ class TestListarInscripcionesAlumno:
     async def test_list_filter_solo_activas(self, client, db_session):
         alumno = await _create_alumno(db_session)
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session)
-        await _create_membership(db_session, alumno_id=alumno.id, plan_id=plan.id)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
@@ -750,23 +587,19 @@ class TestWaitlistPositions:
     async def test_waitlist_positions_sequential(self, client, db_session):
         """Multiple waitlisted students get sequential positions."""
         profesor = await _create_profesor(db_session)
-        plan = await _create_plan(db_session, max_actividades=3)
         act = await _create_actividad(db_session, cupo_maximo=1)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
 
         # Fill the spot
         a1 = await _create_alumno(db_session, email="a1@test.com")
-        await _create_membership(db_session, alumno_id=a1.id, plan_id=plan.id)
         await client.post("/api/inscripciones", json={"turno_id": turno.id}, headers=_auth(a1))
 
         # Waitlist student 2
         a2 = await _create_alumno(db_session, email="a2@test.com")
-        await _create_membership(db_session, alumno_id=a2.id, plan_id=plan.id)
         r = await client.post("/api/inscripciones", json={"turno_id": turno.id}, headers=_auth(a2))
         assert r.json()["posicion"] == 1
 
         # Waitlist student 3
         a3 = await _create_alumno(db_session, email="a3@test.com")
-        await _create_membership(db_session, alumno_id=a3.id, plan_id=plan.id)
         r = await client.post("/api/inscripciones", json={"turno_id": turno.id}, headers=_auth(a3))
         assert r.json()["posicion"] == 2

@@ -11,7 +11,6 @@ from app.models import (  # noqa: F401 - imports register models with Base
     Inscripcion,
     ListaEspera,
     Notificacion,
-    Pago,
     Plan,
     Rutina,
     RutinaAsignacion,

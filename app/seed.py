@@ -17,13 +17,10 @@ from app.models import (
     Asistencia,
     DiaSemana,
     EstadoInscripcion,
-    EstadoPago,
     EvaluacionSalud,
     Inscripcion,
     ListaEspera,
-    MetodoPago,
     Notificacion,
-    Pago,
     Plan,
     RolUsuario,
     Turno,
@@ -361,76 +358,12 @@ async def seed() -> None:
         await db.flush()
         print(f"Created {len(turnos)} shifts")
 
-        # --- Payments ---
-        # Assign plans to students with varied statuses
-        plan_basico, plan_intermedio, plan_premium = planes
-        pagos = []
-
-        # Active students with approved payments (10 students)
-        for i, alumno in enumerate(alumnos[:10]):
-            if i < 3:
-                plan = plan_premium
-            elif i < 7:
-                plan = plan_intermedio
-            else:
-                plan = plan_basico
-
-            pago = Pago(
-                alumno_id=alumno.id,
-                plan_id=plan.id,
-                monto=float(plan.precio),
-                fecha_pago=NOW - timedelta(days=random.randint(1, 20)),
-                fecha_vencimiento=TODAY + timedelta(days=random.randint(5, 25)),
-                estado=EstadoPago.APROBADO,
-                metodo_pago=random.choice(list(MetodoPago)),
-            )
-            pagos.append(pago)
-            db.add(pago)
-
-        # Expired payment students (3 students)
-        for alumno in alumnos[10:13]:
-            plan = random.choice([plan_basico, plan_intermedio])
-            pago = Pago(
-                alumno_id=alumno.id,
-                plan_id=plan.id,
-                monto=float(plan.precio),
-                fecha_pago=NOW - timedelta(days=45),
-                fecha_vencimiento=TODAY - timedelta(days=random.randint(5, 15)),
-                estado=EstadoPago.VENCIDO,
-                metodo_pago=MetodoPago.EFECTIVO,
-            )
-            pagos.append(pago)
-            db.add(pago)
-
-        # Pending payment students (2 students)
-        for alumno in alumnos[13:15]:
-            plan = plan_basico
-            pago = Pago(
-                alumno_id=alumno.id,
-                plan_id=plan.id,
-                monto=float(plan.precio),
-                fecha_pago=NOW - timedelta(days=2),
-                fecha_vencimiento=TODAY + timedelta(days=28),
-                estado=EstadoPago.PENDIENTE,
-                metodo_pago=MetodoPago.MERCADOPAGO,
-            )
-            pagos.append(pago)
-            db.add(pago)
-
-        await db.flush()
-        print(f"Created {len(pagos)} payments")
-
         # --- Enrollments ---
         inscripciones = []
 
-        # Active students: enroll in 1-3 turnos based on their plan
+        # Active students: enroll in 1-3 turnos
         for i, alumno in enumerate(alumnos[:10]):
-            if i < 3:
-                num_turnos = 3
-            elif i < 7:
-                num_turnos = 2
-            else:
-                num_turnos = 1
+            num_turnos = random.randint(1, 3)
             selected_turnos = random.sample(turnos, min(num_turnos, len(turnos)))
             for turno in selected_turnos:
                 insc = Inscripcion(

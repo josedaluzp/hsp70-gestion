@@ -8,12 +8,10 @@ from app.models import (
     Asistencia,
     DiaSemana,
     EstadoInscripcion,
-    EstadoPago,
     EvaluacionSalud,
     Inscripcion,
     ListaEspera,
     Notificacion,
-    Pago,
     Plan,
     RolUsuario,
     Turno,
@@ -119,22 +117,6 @@ async def test_seed_creates_turnos_realistic_hours(seeded_db):
     for turno in turnos:
         assert turno.hora_inicio >= time(8, 0)
         assert turno.hora_inicio <= time(20, 0)
-
-
-@pytest.mark.asyncio
-async def test_seed_has_active_payments(seeded_db):
-    result = await seeded_db.execute(
-        select(Pago).where(Pago.estado == EstadoPago.APROBADO)
-    )
-    assert len(result.scalars().all()) >= 10
-
-
-@pytest.mark.asyncio
-async def test_seed_has_expired_payments(seeded_db):
-    result = await seeded_db.execute(
-        select(Pago).where(Pago.estado == EstadoPago.VENCIDO)
-    )
-    assert len(result.scalars().all()) >= 1
 
 
 @pytest.mark.asyncio

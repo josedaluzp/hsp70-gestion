@@ -14,7 +14,6 @@ from app.models import (
     Inscripcion,
     ListaEspera,
     Notificacion,
-    Pago,
     Plan,
     Turno,
     Usuario,
@@ -22,8 +21,6 @@ from app.models import (
 from app.models.enums import (
     DiaSemana,
     EstadoInscripcion,
-    EstadoPago,
-    MetodoPago,
     RolUsuario,
 )
 
@@ -34,7 +31,6 @@ EXPECTED_TABLES = {
     "inscripciones",
     "asistencias",
     "planes",
-    "pagos",
     "evaluaciones_salud",
     "lista_espera",
     "notificaciones",
@@ -81,7 +77,7 @@ class TestTableCreation:
             table_names = await conn.run_sync(
                 lambda sync_conn: inspect(sync_conn).get_table_names()
             )
-        assert len([t for t in table_names if t in EXPECTED_TABLES]) == 10
+        assert len([t for t in table_names if t in EXPECTED_TABLES]) == 9
 
 
 # ---------------------------------------------------------------------------
@@ -98,16 +94,6 @@ class TestEnums:
     def test_estado_inscripcion_values(self):
         assert set(e.value for e in EstadoInscripcion) == {
             "activa", "cancelada", "lista_espera"
-        }
-
-    def test_estado_pago_values(self):
-        assert set(e.value for e in EstadoPago) == {
-            "pendiente", "aprobado", "rechazado", "vencido"
-        }
-
-    def test_metodo_pago_values(self):
-        assert set(m.value for m in MetodoPago) == {
-            "mercadopago", "efectivo", "transferencia"
         }
 
     def test_dia_semana_values(self):
@@ -143,14 +129,6 @@ class TestForeignKeys:
                 lambda sync_conn: inspect(sync_conn).get_foreign_keys("asistencias")
             )
         assert fks[0]["constrained_columns"] == ["inscripcion_id"]
-
-    async def test_pago_fks(self, db_engine):
-        async with db_engine.connect() as conn:
-            fks = await conn.run_sync(
-                lambda sync_conn: inspect(sync_conn).get_foreign_keys("pagos")
-            )
-        fk_columns = {fk["constrained_columns"][0] for fk in fks}
-        assert {"alumno_id", "plan_id"} == fk_columns
 
     async def test_evaluacion_salud_fks(self, db_engine):
         async with db_engine.connect() as conn:
@@ -298,29 +276,6 @@ class TestModelInstances:
         await db.flush()
         assert asistencia.id is not None
 
-    async def test_create_plan_and_pago(self, db):
-        plan = Plan(
-            nombre="Plan Mensual", precio=5000.00,
-            duracion_dias=30, max_actividades=3,
-        )
-        alumno = Usuario(
-            nombre="Luis", apellido="Fernandez", email="luis@test.com",
-            password_hash="hashed",
-        )
-        db.add_all([plan, alumno])
-        await db.flush()
-
-        pago = Pago(
-            alumno_id=alumno.id, plan_id=plan.id,
-            monto=5000.00, fecha_vencimiento=date(2026, 4, 18),
-            estado=EstadoPago.APROBADO,
-            metodo_pago=MetodoPago.MERCADOPAGO,
-            mp_payment_id="MP-12345",
-        )
-        db.add(pago)
-        await db.flush()
-        assert pago.id is not None
-
     async def test_create_evaluacion_salud(self, db):
         alumno = Usuario(
             nombre="Sofia", apellido="Torres", email="sofia@test.com",
@@ -461,75 +416,3 @@ class TestRepr:
         assert "Yoga" in repr(a)
 
 
-# ---------------------------------------------------------------------------
-# TipoPago enum and new model fields tests
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.asyncio
-async def test_plan_has_precio_suscripcion(db_session):
-    from app.models.plan import Plan
-
-    plan = Plan(
-        nombre="Plan Sub Test",
-        precio=15000.0,
-        precio_suscripcion=12000.0,
-        duracion_dias=30,
-        max_actividades=5,
-    )
-    db_session.add(plan)
-    await db_session.commit()
-    await db_session.refresh(plan)
-    assert plan.precio_suscripcion == 12000.0
-
-
-@pytest.mark.asyncio
-async def test_plan_precio_suscripcion_nullable(db_session):
-    from app.models.plan import Plan
-
-    plan = Plan(
-        nombre="Plan No Sub",
-        precio=15000.0,
-        duracion_dias=30,
-        max_actividades=5,
-    )
-    db_session.add(plan)
-    await db_session.commit()
-    await db_session.refresh(plan)
-    assert plan.precio_suscripcion is None
-
-
-@pytest.mark.asyncio
-async def test_pago_has_tipo_pago_and_subscription_id(db_session):
-    from app.core.security import hash_password
-    from app.models.enums import EstadoPago, MetodoPago, RolUsuario, TipoPago
-    from app.models.pago import Pago
-    from app.models.plan import Plan
-    from app.models.usuario import Usuario
-
-    user = Usuario(
-        nombre="Test", apellido="User", email="modelsub@test.com",
-        password_hash=hash_password("pass"), rol=RolUsuario.ALUMNO,
-    )
-    plan = Plan(nombre="Plan MP", precio=15000.0, duracion_dias=30, max_actividades=5)
-    db_session.add_all([user, plan])
-    await db_session.commit()
-    await db_session.refresh(user)
-    await db_session.refresh(plan)
-
-    from datetime import date, timedelta
-
-    pago = Pago(
-        alumno_id=user.id,
-        plan_id=plan.id,
-        monto=12000.0,
-        fecha_vencimiento=date.today() + timedelta(days=30),
-        metodo_pago=MetodoPago.MERCADOPAGO,
-        tipo_pago=TipoPago.SUSCRIPCION,
-        mp_subscription_id="preapproval_123",
-    )
-    db_session.add(pago)
-    await db_session.commit()
-    await db_session.refresh(pago)
-    assert pago.tipo_pago == TipoPago.SUSCRIPCION
-    assert pago.mp_subscription_id == "preapproval_123"
