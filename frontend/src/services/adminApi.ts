@@ -84,7 +84,6 @@ export interface Plan {
   nombre: string;
   descripcion: string | null;
   precio: number;
-  precio_suscripcion: number | null;
   duracion_dias: number;
   max_actividades: number;
 }
@@ -93,7 +92,6 @@ export interface PlanForm {
   nombre: string;
   descripcion?: string;
   precio: number;
-  precio_suscripcion?: number | null;
   duracion_dias: number;
   max_actividades: number;
 }
@@ -219,15 +217,6 @@ export const reportes = {
       responseType: "blob",
     }),
 
-  pagosExcel: (fechaInicio: string, fechaFin: string) =>
-    api.get("/reportes/pagos/excel", {
-      params: { fecha_inicio: fechaInicio, fecha_fin: fechaFin },
-      responseType: "blob",
-    }),
-
-  morososExcel: () =>
-    api.get("/reportes/morosos/excel", { responseType: "blob" }),
-
   alumnoFichaPdf: (alumnoId: number) =>
     api.get(`/reportes/alumno/${alumnoId}/pdf`, { responseType: "blob" }),
 };
@@ -236,13 +225,9 @@ export const reportes = {
 
 export interface DashboardStats {
   total_alumnos: number;
-  alumnos_activos: number;
   total_profesores: number;
   total_actividades: number;
   turnos_hoy: number;
-  pagos_pendientes: number;
-  pagos_vencidos: number;
-  ingresos_mes: number;
   inscripciones_activas: number;
 }
 

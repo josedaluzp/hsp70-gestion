@@ -27,28 +27,6 @@ export interface MiInscripcionList {
   pages: number;
 }
 
-export interface Pago {
-  id: number;
-  alumno_id: number;
-  plan_id: number;
-  monto: number;
-  fecha_pago: string;
-  fecha_vencimiento: string;
-  estado: string;
-  metodo_pago: string | null;
-  mp_payment_id: string | null;
-  tipo_pago: string;
-  mp_subscription_id: string | null;
-}
-
-export interface PagoList {
-  items: Pago[];
-  total: number;
-  page: number;
-  page_size: number;
-  pages: number;
-}
-
 export interface MiAsistencia {
   id: number;
   inscripcion_id: number;
@@ -149,15 +127,3 @@ export const perfil = {
     api.put(`/usuarios/${userId}`, data),
 };
 
-// ─── MercadoPago ───────────────────────────────────────────────────────────
-
-export const mercadopago = {
-  crearPreferencia: (planId: number) =>
-    api.post<{ checkout_url: string; pago_id: number }>("/mp/crear-preferencia", { plan_id: planId }),
-
-  crearSuscripcion: (planId: number) =>
-    api.post<{ checkout_url: string; pago_id: number }>("/mp/crear-suscripcion", { plan_id: planId }),
-
-  cancelarSuscripcion: (pagoId: number) =>
-    api.post<{ message: string }>(`/mp/cancelar-suscripcion/${pagoId}`),
-};
