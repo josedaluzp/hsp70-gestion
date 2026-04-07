@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { Card, Spinner, Badge, Modal } from "../../components/ui";
+import { Card, Spinner, Modal } from "../../components/ui";
 import { rutinasAlumnoApi } from "../../services/rutinaApi";
 import type { RutinaDetail, RutinaEjercicio } from "../../services/rutinaApi";
 
