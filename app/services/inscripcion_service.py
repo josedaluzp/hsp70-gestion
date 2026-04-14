@@ -7,12 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models.actividad import Actividad
-from app.models.enums import EstadoInscripcion, EstadoPago, RolUsuario
+from app.models.enums import EstadoInscripcion, RolUsuario
 from app.models.inscripcion import Inscripcion
 from app.models.lista_espera import ListaEspera
 from app.models.notificacion import Notificacion
-from app.models.pago import Pago
-from app.models.plan import Plan
 from app.models.turno import Turno
 from app.models.usuario import Usuario
 from app.schemas.inscripcion import InscripcionDetailRead, InscripcionList
@@ -30,9 +28,6 @@ async def inscribir_alumno(
 
     await _check_not_already_enrolled(db, alumno_id, turno_id)
     await _check_not_on_waitlist(db, alumno_id, turno_id)
-
-    plan = await _get_active_membership_plan(db, alumno_id)
-    await _check_max_actividades(db, alumno_id, turno, plan)
 
     cupo_disponible = await _get_cupo_disponible(db, turno)
 
@@ -308,59 +303,6 @@ async def _check_not_on_waitlist(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Student is already on the waitlist for this shift",
-        )
-
-
-async def _get_active_membership_plan(
-    db: AsyncSession, alumno_id: int
-) -> Plan:
-    today = date.today()
-    result = await db.execute(
-        select(Pago)
-        .where(
-            Pago.alumno_id == alumno_id,
-            Pago.estado == EstadoPago.APROBADO,
-            Pago.fecha_vencimiento >= today,
-        )
-        .options(selectinload(Pago.plan))
-        .order_by(Pago.fecha_vencimiento.desc())
-        .limit(1)
-    )
-    pago = result.scalar_one_or_none()
-    if pago is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Student does not have an active membership",
-        )
-    return pago.plan
-
-
-async def _check_max_actividades(
-    db: AsyncSession,
-    alumno_id: int,
-    turno: Turno,
-    plan: Plan,
-) -> None:
-    # Get distinct actividad_ids for active enrollments
-    result = await db.execute(
-        select(Turno.actividad_id)
-        .join(Inscripcion, Inscripcion.turno_id == Turno.id)
-        .where(
-            Inscripcion.alumno_id == alumno_id,
-            Inscripcion.estado == EstadoInscripcion.ACTIVA,
-        )
-        .distinct()
-    )
-    enrolled_actividad_ids = {row[0] for row in result.all()}
-
-    # If the new turno's activity is already enrolled, no new activity is added
-    if turno.actividad_id in enrolled_actividad_ids:
-        return
-
-    if len(enrolled_actividad_ids) >= plan.max_actividades:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Maximum number of activities ({plan.max_actividades}) for your plan has been reached",
         )
 
 

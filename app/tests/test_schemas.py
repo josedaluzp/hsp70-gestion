@@ -6,8 +6,6 @@ from pydantic import ValidationError
 from app.models.enums import (
     DiaSemana,
     EstadoInscripcion,
-    EstadoPago,
-    MetodoPago,
 )
 from app.schemas import (
     ActividadCreate,
@@ -22,8 +20,6 @@ from app.schemas import (
     ListaEsperaRead,
     NotificacionCreate,
     NotificacionRead,
-    PagoCreate,
-    PagoRead,
     PlanCreate,
     PlanRead,
     TurnoCreate,
@@ -393,70 +389,6 @@ class TestPlanRead:
         assert PlanRead.model_config["from_attributes"] is True
 
 
-# --- Pago schemas ---
-
-
-class TestPagoCreate:
-    def test_valid(self):
-        pago = PagoCreate(
-            alumno_id=1,
-            plan_id=1,
-            monto=5000.0,
-            fecha_vencimiento=date(2099, 12, 31),
-            metodo_pago=MetodoPago.EFECTIVO,
-        )
-        assert pago.estado == EstadoPago.PENDIENTE
-
-    def test_monto_positive(self):
-        with pytest.raises(ValidationError, match="monto"):
-            PagoCreate(
-                alumno_id=1,
-                plan_id=1,
-                monto=0,
-                fecha_vencimiento=date(2099, 12, 31),
-                metodo_pago=MetodoPago.EFECTIVO,
-            )
-
-    def test_past_fecha_vencimiento(self):
-        with pytest.raises(ValidationError, match="Due date cannot be in the past"):
-            PagoCreate(
-                alumno_id=1,
-                plan_id=1,
-                monto=5000.0,
-                fecha_vencimiento=date(2000, 1, 1),
-                metodo_pago=MetodoPago.EFECTIVO,
-            )
-
-    def test_invalid_metodo_pago(self):
-        with pytest.raises(ValidationError, match="metodo_pago"):
-            PagoCreate(
-                alumno_id=1,
-                plan_id=1,
-                monto=5000.0,
-                fecha_vencimiento=date(2099, 12, 31),
-                metodo_pago="bitcoin",
-            )
-
-
-class TestPagoRead:
-    def test_from_attributes(self):
-        assert PagoRead.model_config["from_attributes"] is True
-
-    def test_valid_read(self):
-        pago = PagoRead(
-            id=1,
-            alumno_id=1,
-            plan_id=1,
-            monto=5000.0,
-            fecha_pago=datetime(2024, 1, 1),
-            fecha_vencimiento=date(2024, 2, 1),
-            estado=EstadoPago.PENDIENTE,
-            mp_payment_id=None,
-            metodo_pago=MetodoPago.EFECTIVO,
-        )
-        assert pago.id == 1
-
-
 # --- EvaluacionSalud schemas ---
 
 
@@ -597,3 +529,5 @@ class TestNotificacionRead:
             fecha=datetime(2024, 1, 1),
         )
         assert notif.id == 1
+
+

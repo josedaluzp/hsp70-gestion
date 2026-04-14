@@ -27,27 +27,6 @@ export interface MiInscripcionList {
   pages: number;
 }
 
-export interface Pago {
-  id: number;
-  alumno_id: number;
-  plan_id: number;
-  monto: number;
-  fecha_pago: string;
-  fecha_vencimiento: string;
-  estado: string;
-  metodo_pago: string | null;
-  mp_payment_id: string | null;
-  nombre_plan: string | null;
-}
-
-export interface PagoList {
-  items: Pago[];
-  total: number;
-  page: number;
-  page_size: number;
-  pages: number;
-}
-
 export interface MiAsistencia {
   id: number;
   inscripcion_id: number;
@@ -147,3 +126,4 @@ export const perfil = {
   update: (userId: number, data: PerfilUpdate) =>
     api.put(`/usuarios/${userId}`, data),
 };
+

@@ -1,7 +1,7 @@
 """Tests for report and export endpoints."""
 
 import io
-from datetime import date, time, timedelta
+from datetime import date, time
 
 import pytest
 from openpyxl import load_workbook
@@ -12,14 +12,10 @@ from app.models.asistencia import Asistencia
 from app.models.enums import (
     DiaSemana,
     EstadoInscripcion,
-    EstadoPago,
-    MetodoPago,
     RolUsuario,
 )
 from app.models.evaluacion_salud import EvaluacionSalud
 from app.models.inscripcion import Inscripcion
-from app.models.pago import Pago
-from app.models.plan import Plan
 from app.models.turno import Turno
 from app.models.usuario import Usuario
 
@@ -84,33 +80,6 @@ async def _create_turno(db, *, actividad_id, profesor_id, dia=DiaSemana.LUNES):
     await db.commit()
     await db.refresh(turno)
     return turno
-
-
-async def _create_plan(db, *, nombre="Plan Basico"):
-    plan = Plan(
-        nombre=nombre, descripcion="Test plan",
-        precio=5000, duracion_dias=30, max_actividades=2,
-    )
-    db.add(plan)
-    await db.commit()
-    await db.refresh(plan)
-    return plan
-
-
-async def _create_pago(
-    db, *, alumno_id, plan_id, estado=EstadoPago.APROBADO, days_offset=0
-):
-    pago = Pago(
-        alumno_id=alumno_id, plan_id=plan_id,
-        monto=5000,
-        fecha_vencimiento=date.today() + timedelta(days=days_offset),
-        estado=estado,
-        metodo_pago=MetodoPago.EFECTIVO,
-    )
-    db.add(pago)
-    await db.commit()
-    await db.refresh(pago)
-    return pago
 
 
 async def _create_inscripcion(db, *, alumno_id, turno_id):
@@ -289,123 +258,6 @@ class TestReporteAsistenciasExcel:
         assert r.status_code == 403
 
 
-# ── Test: GET /api/reportes/pagos/excel ──────────────────────────
-
-
-class TestReportePagosExcel:
-    @pytest.mark.asyncio
-    async def test_admin_downloads_pagos(self, client, db_session):
-        admin = await _create_admin(db_session)
-        alumno = await _create_alumno(db_session)
-        plan = await _create_plan(db_session)
-        await _create_pago(db_session, alumno_id=alumno.id, plan_id=plan.id)
-
-        r = await client.get(
-            "/api/reportes/pagos/excel",
-            params={"fecha_inicio": "2026-01-01", "fecha_fin": "2026-12-31"},
-            headers=_auth(admin),
-        )
-        assert r.status_code == 200
-        assert EXCEL_MEDIA in r.headers["content-type"]
-        assert "pagos_" in r.headers["content-disposition"]
-
-        wb = _parse_excel(r.content)
-        ws = wb.active
-        assert ws.title == "Pagos"
-        assert ws.max_row == 2  # header + 1 payment
-        assert ws.cell(1, 6).value == "Monto"
-
-    @pytest.mark.asyncio
-    async def test_empty_range_returns_headers(self, client, db_session):
-        admin = await _create_admin(db_session)
-
-        r = await client.get(
-            "/api/reportes/pagos/excel",
-            params={"fecha_inicio": "2020-01-01", "fecha_fin": "2020-12-31"},
-            headers=_auth(admin),
-        )
-        assert r.status_code == 200
-        wb = _parse_excel(r.content)
-        ws = wb.active
-        assert ws.max_row == 1
-
-    @pytest.mark.asyncio
-    async def test_non_admin_forbidden(self, client, db_session):
-        alumno = await _create_alumno(db_session)
-        r = await client.get(
-            "/api/reportes/pagos/excel",
-            params={"fecha_inicio": "2026-01-01", "fecha_fin": "2026-12-31"},
-            headers=_auth(alumno),
-        )
-        assert r.status_code == 403
-
-
-# ── Test: GET /api/reportes/morosos/excel ────────────────────────
-
-
-class TestReporteMorososExcel:
-    @pytest.mark.asyncio
-    async def test_admin_downloads_morosos(self, client, db_session):
-        admin = await _create_admin(db_session)
-        alumno = await _create_alumno(db_session)
-        plan = await _create_plan(db_session)
-        # Overdue payment (vencimiento in the past)
-        await _create_pago(
-            db_session, alumno_id=alumno.id, plan_id=plan.id,
-            estado=EstadoPago.PENDIENTE, days_offset=-10,
-        )
-
-        r = await client.get("/api/reportes/morosos/excel", headers=_auth(admin))
-        assert r.status_code == 200
-        assert EXCEL_MEDIA in r.headers["content-type"]
-        assert "morosos.xlsx" in r.headers["content-disposition"]
-
-        wb = _parse_excel(r.content)
-        ws = wb.active
-        assert ws.title == "Morosos"
-        assert ws.max_row == 2  # header + 1 overdue
-
-    @pytest.mark.asyncio
-    async def test_approved_payments_not_included(self, client, db_session):
-        admin = await _create_admin(db_session)
-        alumno = await _create_alumno(db_session)
-        plan = await _create_plan(db_session)
-        # Approved payment, past due date — should NOT show
-        await _create_pago(
-            db_session, alumno_id=alumno.id, plan_id=plan.id,
-            estado=EstadoPago.APROBADO, days_offset=-10,
-        )
-
-        r = await client.get("/api/reportes/morosos/excel", headers=_auth(admin))
-        assert r.status_code == 200
-        wb = _parse_excel(r.content)
-        ws = wb.active
-        assert ws.max_row == 1  # Headers only
-
-    @pytest.mark.asyncio
-    async def test_future_pending_not_included(self, client, db_session):
-        admin = await _create_admin(db_session)
-        alumno = await _create_alumno(db_session)
-        plan = await _create_plan(db_session)
-        # Pending but not yet due
-        await _create_pago(
-            db_session, alumno_id=alumno.id, plan_id=plan.id,
-            estado=EstadoPago.PENDIENTE, days_offset=30,
-        )
-
-        r = await client.get("/api/reportes/morosos/excel", headers=_auth(admin))
-        assert r.status_code == 200
-        wb = _parse_excel(r.content)
-        ws = wb.active
-        assert ws.max_row == 1
-
-    @pytest.mark.asyncio
-    async def test_non_admin_forbidden(self, client, db_session):
-        alumno = await _create_alumno(db_session)
-        r = await client.get("/api/reportes/morosos/excel", headers=_auth(alumno))
-        assert r.status_code == 403
-
-
 # ── Test: GET /api/reportes/alumno/{id}/pdf ──────────────────────
 
 
@@ -414,8 +266,6 @@ class TestReporteAlumnoPdf:
     async def test_admin_downloads_alumno_pdf(self, client, db_session):
         admin = await _create_admin(db_session)
         alumno = await _create_alumno(db_session)
-        plan = await _create_plan(db_session)
-        await _create_pago(db_session, alumno_id=alumno.id, plan_id=plan.id)
 
         r = await client.get(
             f"/api/reportes/alumno/{alumno.id}/pdf", headers=_auth(admin)
@@ -429,17 +279,13 @@ class TestReporteAlumnoPdf:
 
     @pytest.mark.asyncio
     async def test_pdf_with_full_data(self, client, db_session):
-        """PDF with attendance, payments, and evaluations."""
+        """PDF with attendance and evaluations."""
         admin = await _create_admin(db_session)
         profesor = await _create_profesor(db_session)
         alumno = await _create_alumno(db_session)
-        plan = await _create_plan(db_session)
         act = await _create_actividad(db_session)
         turno = await _create_turno(db_session, actividad_id=act.id, profesor_id=profesor.id)
         inscripcion = await _create_inscripcion(db_session, alumno_id=alumno.id, turno_id=turno.id)
-
-        # Add payment
-        await _create_pago(db_session, alumno_id=alumno.id, plan_id=plan.id)
 
         # Add attendance
         db_session.add(Asistencia(

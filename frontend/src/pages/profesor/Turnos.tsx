@@ -164,7 +164,7 @@ export default function ProfesorTurnos() {
         </Card>
       ) : (
         <Card padding="none">
-          <Table columns={columns} data={sortedTurnos} />
+          <Table columns={columns} data={sortedTurnos} keyExtractor={(row) => row.id} />
         </Card>
       )}
     </div>

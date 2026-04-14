@@ -1,0 +1,8 @@
+=== Task #30 (api-designer) ===
+Success: True
+Return code: 0
+--- STDOUT ---
+{"type":"result","subtype":"success","is_error":false,"duration_ms":4767,"duration_api_ms":352812,"num_turns":1,"result":"The background task notification confirms the full test suite completed successfully (exit code 0). The implementation is done and committed — all 425 tests pass, working tree is clean.","stop_reason":"end_turn","session_id":"35222b2e-7547-4503-bd11-3012e79f4319","total_cost_usd":1.86391705,"usage":{"input_tokens":3,"cache_creation_input_tokens":873,"cache_read_input_tokens":93610,"output_tokens":39,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":873,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{"claude-opus-4-6[1m]":{"inputTokens":40,"outputTokens":13745,"cacheReadInputTokens":1667284,"cacheCreationInputTokens":86112,"webSearchRequests":0,"costUSD":1.7156669999999998,"contextWindow":1000000,"maxOutputTokens":64000},"claude-haiku-4-5-20251001":{"inputTokens":546,"outputTokens":7601,"cacheReadInputTokens":672828,"cacheCreationInputTokens":33933,"webSearchRequests":0,"costUSD":0.14825004999999997,"contextWindow":200000,"maxOutputTokens":32000}},"permission_denials":[],"fast_mode_state":"off","uuid":"fe056441-8d32-4585-9e09-e365d8371c42"}
+
+--- STDERR ---
+

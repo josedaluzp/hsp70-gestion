@@ -6,12 +6,15 @@ from app.core.database import Base, engine
 from app.models import (  # noqa: F401 - imports register models with Base
     Actividad,
     Asistencia,
+    Ejercicio,
     EvaluacionSalud,
     Inscripcion,
     ListaEspera,
     Notificacion,
-    Pago,
     Plan,
+    Rutina,
+    RutinaAsignacion,
+    RutinaEjercicio,
     Turno,
     Usuario,
 )

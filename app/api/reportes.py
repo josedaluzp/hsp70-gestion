@@ -60,30 +60,6 @@ async def reporte_asistencias_excel(
     return _excel_response(content, f"asistencias_{fecha_inicio}_{fecha_fin}.xlsx")
 
 
-@router.get("/api/reportes/pagos/excel")
-async def reporte_pagos_excel(
-    fecha_inicio: date = Query(..., description="Start date (YYYY-MM-DD)"),
-    fecha_fin: date = Query(..., description="End date (YYYY-MM-DD)"),
-    db: AsyncSession = Depends(get_db),
-    _user: Usuario = Depends(require_role(RolUsuario.ADMIN)),
-):
-    """Export payment history for a period to Excel."""
-    content = await reporte_service.generar_excel_pagos(
-        db, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin
-    )
-    return _excel_response(content, f"pagos_{fecha_inicio}_{fecha_fin}.xlsx")
-
-
-@router.get("/api/reportes/morosos/excel")
-async def reporte_morosos_excel(
-    db: AsyncSession = Depends(get_db),
-    _user: Usuario = Depends(require_role(RolUsuario.ADMIN)),
-):
-    """Export students with overdue payments to Excel."""
-    content = await reporte_service.generar_excel_morosos(db)
-    return _excel_response(content, "morosos.xlsx")
-
-
 @router.get("/api/reportes/alumno/{alumno_id}/pdf")
 async def reporte_alumno_pdf(
     alumno_id: int,

@@ -14,19 +14,6 @@ class EstadoInscripcion(str, enum.Enum):
     LISTA_ESPERA = "lista_espera"
 
 
-class EstadoPago(str, enum.Enum):
-    PENDIENTE = "pendiente"
-    APROBADO = "aprobado"
-    RECHAZADO = "rechazado"
-    VENCIDO = "vencido"
-
-
-class MetodoPago(str, enum.Enum):
-    MERCADOPAGO = "mercadopago"
-    EFECTIVO = "efectivo"
-    TRANSFERENCIA = "transferencia"
-
-
 class DiaSemana(str, enum.Enum):
     LUNES = "lunes"
     MARTES = "martes"

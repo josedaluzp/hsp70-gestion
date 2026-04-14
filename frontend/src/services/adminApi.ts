@@ -217,15 +217,20 @@ export const reportes = {
       responseType: "blob",
     }),
 
-  pagosExcel: (fechaInicio: string, fechaFin: string) =>
-    api.get("/reportes/pagos/excel", {
-      params: { fecha_inicio: fechaInicio, fecha_fin: fechaFin },
-      responseType: "blob",
-    }),
-
-  morososExcel: () =>
-    api.get("/reportes/morosos/excel", { responseType: "blob" }),
-
   alumnoFichaPdf: (alumnoId: number) =>
     api.get(`/reportes/alumno/${alumnoId}/pdf`, { responseType: "blob" }),
+};
+
+// ─── Stats ──────────────────────────────────────────────────────────────────
+
+export interface DashboardStats {
+  total_alumnos: number;
+  total_profesores: number;
+  total_actividades: number;
+  turnos_hoy: number;
+  inscripciones_activas: number;
+}
+
+export const stats = {
+  dashboard: () => api.get<DashboardStats>("/stats/dashboard"),
 };

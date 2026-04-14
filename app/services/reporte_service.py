@@ -24,9 +24,7 @@ from sqlalchemy.orm import selectinload
 from app.models.asistencia import Asistencia
 from app.models.evaluacion_salud import EvaluacionSalud
 from app.models.inscripcion import Inscripcion
-from app.models.enums import EstadoInscripcion, EstadoPago, RolUsuario
-from app.models.pago import Pago
-from app.models.plan import Plan
+from app.models.enums import RolUsuario
 from app.models.turno import Turno
 from app.models.actividad import Actividad
 from app.models.usuario import Usuario
@@ -205,115 +203,6 @@ async def generar_excel_asistencias(
     return _workbook_to_bytes(wb)
 
 
-async def generar_excel_pagos(
-    db: AsyncSession, *, fecha_inicio: date, fecha_fin: date
-) -> bytes:
-    """Generate Excel with payment history for a period."""
-    query = (
-        select(Pago)
-        .where(
-            Pago.fecha_pago >= datetime.combine(fecha_inicio, datetime.min.time()),
-            Pago.fecha_pago <= datetime.combine(fecha_fin, datetime.max.time()),
-        )
-        .options(
-            selectinload(Pago.alumno),
-            selectinload(Pago.plan),
-        )
-        .order_by(Pago.fecha_pago.desc())
-    )
-    result = await db.execute(query)
-    pagos = list(result.scalars().all())
-
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Pagos"
-
-    headers = [
-        "ID", "Fecha Pago", "Alumno", "DNI", "Plan",
-        "Monto", "Estado", "Metodo Pago", "Fecha Vencimiento",
-    ]
-    ws.append(headers)
-    _apply_header_style(ws, 1, len(headers))
-
-    for p in pagos:
-        ws.append([
-            p.id,
-            p.fecha_pago.strftime("%Y-%m-%d %H:%M") if p.fecha_pago else "",
-            f"{p.alumno.apellido}, {p.alumno.nombre}",
-            p.alumno.dni or "",
-            p.plan.nombre,
-            float(p.monto),
-            p.estado.value,
-            p.metodo_pago.value,
-            p.fecha_vencimiento.isoformat() if p.fecha_vencimiento else "",
-        ])
-
-    if pagos:
-        _apply_data_style(ws, 2, len(pagos) + 1, len(headers))
-    _auto_column_width(ws, len(headers))
-
-    # Format monto column as currency
-    for row in range(2, len(pagos) + 2):
-        cell = ws.cell(row=row, column=6)
-        cell.number_format = '#,##0.00'
-
-    return _workbook_to_bytes(wb)
-
-
-async def generar_excel_morosos(db: AsyncSession) -> bytes:
-    """Generate Excel with students who have overdue payments."""
-    today = date.today()
-    query = (
-        select(Pago)
-        .where(
-            Pago.fecha_vencimiento < today,
-            Pago.estado.in_([EstadoPago.PENDIENTE, EstadoPago.VENCIDO]),
-        )
-        .options(
-            selectinload(Pago.alumno),
-            selectinload(Pago.plan),
-        )
-        .order_by(Pago.fecha_vencimiento)
-    )
-    result = await db.execute(query)
-    pagos_vencidos = list(result.scalars().all())
-
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Morosos"
-
-    headers = [
-        "Alumno", "DNI", "Email", "Telefono", "Plan",
-        "Monto", "Fecha Vencimiento", "Dias Vencido", "Estado",
-    ]
-    ws.append(headers)
-    _apply_header_style(ws, 1, len(headers))
-
-    for p in pagos_vencidos:
-        dias_vencido = (today - p.fecha_vencimiento).days
-        ws.append([
-            f"{p.alumno.apellido}, {p.alumno.nombre}",
-            p.alumno.dni or "",
-            p.alumno.email,
-            p.alumno.telefono or "",
-            p.plan.nombre,
-            float(p.monto),
-            p.fecha_vencimiento.isoformat(),
-            dias_vencido,
-            p.estado.value,
-        ])
-
-    if pagos_vencidos:
-        _apply_data_style(ws, 2, len(pagos_vencidos) + 1, len(headers))
-    _auto_column_width(ws, len(headers))
-
-    # Format monto column as currency
-    for row in range(2, len(pagos_vencidos) + 2):
-        ws.cell(row=row, column=6).number_format = '#,##0.00'
-
-    return _workbook_to_bytes(wb)
-
-
 # ── PDF report generator ────────────────────────────────────────
 
 
@@ -329,29 +218,6 @@ async def _get_alumno_or_404(db: AsyncSession, alumno_id: int) -> Usuario:
             detail="Student not found",
         )
     return alumno
-
-
-async def _get_ultimo_pago_aprobado(db: AsyncSession, alumno_id: int) -> Pago | None:
-    """Get the most recent approved payment for a student."""
-    result = await db.execute(
-        select(Pago)
-        .where(Pago.alumno_id == alumno_id, Pago.estado == EstadoPago.APROBADO)
-        .options(selectinload(Pago.plan))
-        .order_by(Pago.fecha_pago.desc())
-        .limit(1)
-    )
-    return result.scalar_one_or_none()
-
-
-async def _get_pagos_alumno(db: AsyncSession, alumno_id: int) -> list[Pago]:
-    """Get all payments for a student."""
-    result = await db.execute(
-        select(Pago)
-        .where(Pago.alumno_id == alumno_id)
-        .options(selectinload(Pago.plan))
-        .order_by(Pago.fecha_pago.desc())
-    )
-    return list(result.scalars().all())
 
 
 async def _get_asistencias_alumno(db: AsyncSession, alumno_id: int) -> list[Asistencia]:
@@ -509,8 +375,6 @@ def _build_evolution_graph_drawing(evaluaciones: list[EvaluacionSalud], width: f
 async def generar_pdf_alumno(db: AsyncSession, *, alumno_id: int) -> bytes:
     """Generate a professional PDF profile card for a student."""
     alumno = await _get_alumno_or_404(db, alumno_id)
-    ultimo_pago = await _get_ultimo_pago_aprobado(db, alumno_id)
-    pagos = await _get_pagos_alumno(db, alumno_id)
     asistencias = await _get_asistencias_alumno(db, alumno_id)
     evaluaciones = await _get_evaluaciones_alumno(db, alumno_id)
 
@@ -549,39 +413,6 @@ async def generar_pdf_alumno(db: AsyncSession, *, alumno_id: int) -> bytes:
         ["Fecha Alta", alumno.created_at.strftime("%Y-%m-%d") if alumno.created_at else "-"],
     ]
     elements.append(_make_table(personal_data, [page_width * 0.35, page_width * 0.65]))
-
-    # Current membership
-    elements.append(Paragraph("Membresia Actual", section_style))
-    if ultimo_pago:
-        membresia_data = [
-            ["Campo", "Valor"],
-            ["Plan", ultimo_pago.plan.nombre],
-            ["Monto", f"${float(ultimo_pago.monto):.2f}"],
-            ["Fecha Pago", ultimo_pago.fecha_pago.strftime("%Y-%m-%d") if ultimo_pago.fecha_pago else "-"],
-            ["Vencimiento", ultimo_pago.fecha_vencimiento.isoformat() if ultimo_pago.fecha_vencimiento else "-"],
-            ["Estado", ultimo_pago.estado.value.capitalize()],
-        ]
-        elements.append(_make_table(membresia_data, [page_width * 0.35, page_width * 0.65]))
-    else:
-        elements.append(Paragraph("Sin membresia activa.", body_style))
-
-    # Payment history
-    elements.append(Paragraph("Historial de Pagos", section_style))
-    if pagos:
-        pago_headers = ["Fecha", "Plan", "Monto", "Estado", "Metodo"]
-        pago_data = [pago_headers]
-        for p in pagos[:20]:
-            pago_data.append([
-                p.fecha_pago.strftime("%Y-%m-%d") if p.fecha_pago else "-",
-                p.plan.nombre,
-                f"${float(p.monto):.2f}",
-                p.estado.value,
-                p.metodo_pago.value,
-            ])
-        col_w = page_width / 5
-        elements.append(_make_table(pago_data, [col_w] * 5))
-    else:
-        elements.append(Paragraph("Sin pagos registrados.", body_style))
 
     # Attendance history
     elements.append(Paragraph("Historial de Asistencias", section_style))

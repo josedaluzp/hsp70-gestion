@@ -5,8 +5,8 @@ from app.schemas.evaluacion_salud import EvaluacionSaludCreate, EvaluacionSaludR
 from app.schemas.inscripcion import InscripcionCreate, InscripcionRead
 from app.schemas.lista_espera import ListaEsperaCreate, ListaEsperaRead
 from app.schemas.notificacion import NotificacionCreate, NotificacionRead
-from app.schemas.pago import PagoCreate, PagoList, PagoRead, PagoUpdate
 from app.schemas.plan import PlanCreate, PlanRead
+from app.schemas.stats import DashboardStats
 from app.schemas.turno import TurnoCreate, TurnoRead
 from app.schemas.usuario import UserCreate, UserRead, UserUpdate
 
@@ -26,12 +26,9 @@ __all__ = [
     "ListaEsperaRead",
     "NotificacionCreate",
     "NotificacionRead",
-    "PagoCreate",
-    "PagoList",
-    "PagoRead",
-    "PagoUpdate",
     "PlanCreate",
     "PlanRead",
+    "DashboardStats",
     "TurnoCreate",
     "TurnoRead",
     "UserCreate",

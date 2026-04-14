@@ -31,9 +31,6 @@ class Usuario(Base):
     inscripciones: Mapped[list["Inscripcion"]] = relationship(  # noqa: F821
         back_populates="alumno", foreign_keys="Inscripcion.alumno_id"
     )
-    pagos: Mapped[list["Pago"]] = relationship(  # noqa: F821
-        back_populates="alumno", foreign_keys="Pago.alumno_id"
-    )
     evaluaciones_como_alumno: Mapped[list["EvaluacionSalud"]] = relationship(  # noqa: F821
         back_populates="alumno", foreign_keys="EvaluacionSalud.alumno_id"
     )
@@ -46,6 +43,12 @@ class Usuario(Base):
     )
     notificaciones: Mapped[list["Notificacion"]] = relationship(  # noqa: F821
         back_populates="usuario", foreign_keys="Notificacion.usuario_id"
+    )
+    rutinas_creadas: Mapped[list["Rutina"]] = relationship(  # noqa: F821
+        back_populates="profesor", foreign_keys="[Rutina.profesor_id]"
+    )
+    rutinas_asignadas: Mapped[list["RutinaAsignacion"]] = relationship(  # noqa: F821
+        back_populates="alumno", foreign_keys="[RutinaAsignacion.alumno_id]"
     )
 
     def __repr__(self) -> str:

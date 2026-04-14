@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { Card, Spinner, EmptyState, Badge, Button } from "../../components/ui";
+import { Card, Spinner, Badge, Button } from "../../components/ui";
 import {
   inscripciones,
   notificacionesAlumno,
@@ -76,11 +76,11 @@ export default function AlumnoDashboard() {
   }, [user]);
 
   const turnosHoy = misInscripciones.filter(
-    (i) => i.dia_semana === hoy && i.estado === "ACTIVA",
+    (i) => i.dia_semana === hoy && i.estado === "activa",
   );
 
   const totalActivas = misInscripciones.filter(
-    (i) => i.estado === "ACTIVA",
+    (i) => i.estado === "activa",
   ).length;
 
   if (loading) {
@@ -100,88 +100,134 @@ export default function AlumnoDashboard() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-neutral-900">
+    <div className="space-y-10">
+      {/* Welcome header */}
+      <div className="rounded-2xl bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-8 sm:px-8">
+        <h1 className="text-2xl font-bold text-white sm:text-3xl">
           Hola, {user?.nombre}
         </h1>
-        <p className="mt-1 text-sm text-neutral-500">
-          {DIAS_SEMANA[hoy]} — Tu resumen del día
+        <p className="mt-2 text-primary-100 text-base">
+          {DIAS_SEMANA[hoy]} &mdash; Este es tu resumen del día
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      {/* Stats overview */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
         <StatCard
-          label="Turnos hoy"
+          label="Clases hoy"
           value={turnosHoy.length}
+          icon={<ClockIcon className="h-6 w-6" />}
           color="primary"
         />
         <StatCard
           label="Inscripciones activas"
           value={totalActivas}
-          color="accent"
+          icon={<CalendarIcon className="h-6 w-6" />}
+          color="success"
         />
         <StatCard
           label="Actividades"
-          value={new Set(misInscripciones.filter((i) => i.estado === "ACTIVA").map((i) => i.nombre_actividad)).size}
-          color="default"
+          value={new Set(misInscripciones.filter((i) => i.estado === "activa").map((i) => i.nombre_actividad)).size}
+          icon={<ActivityIcon className="h-6 w-6" />}
+          color="warning"
         />
       </div>
 
-      {/* Today's shifts */}
+      {/* Quick actions */}
       <div>
         <h2 className="mb-4 text-lg font-semibold text-neutral-900">
-          Tus turnos de hoy
+          Accesos rápidos
+        </h2>
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+          <QuickAction
+            label="Actividades"
+            description="Explorar y anotarte"
+            onClick={() => navigate("/alumno/actividades")}
+            icon={<ActivityIcon className="h-6 w-6" />}
+            color="primary"
+          />
+          <QuickAction
+            label="Mis turnos"
+            description="Ver tus inscripciones"
+            onClick={() => navigate("/alumno/inscripciones")}
+            icon={<CalendarIcon className="h-6 w-6" />}
+            color="success"
+          />
+          <QuickAction
+            label="Mis pagos"
+            description="Historial y membresía"
+            onClick={() => navigate("/alumno/pagos")}
+            icon={<CreditCardIcon className="h-6 w-6" />}
+            color="warning"
+          />
+          <QuickAction
+            label="Mis rutinas"
+            description="Tu plan de entrenamiento"
+            onClick={() => navigate("/alumno/rutinas")}
+            icon={<DumbbellIcon className="h-6 w-6" />}
+            color="neutral"
+          />
+        </div>
+      </div>
+
+      {/* Today's classes */}
+      <div>
+        <h2 className="mb-4 text-lg font-semibold text-neutral-900">
+          Tus clases de hoy
         </h2>
 
         {turnosHoy.length === 0 ? (
-          <Card>
-            <EmptyState
-              title="Sin turnos hoy"
-              description={`No tenés turnos para ${DIAS_SEMANA[hoy]?.toLowerCase()}.`}
-              action={
-                <Button
-                  variant="outline"
-                  onClick={() => navigate("/alumno/actividades")}
-                >
-                  Explorar actividades
-                </Button>
-              }
-            />
+          <Card className="border-dashed">
+            <div className="flex flex-col items-center py-8 text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100">
+                <CalendarIcon className="h-6 w-6 text-neutral-400" />
+              </div>
+              <p className="font-medium text-neutral-700">No tenés clases hoy</p>
+              <p className="mt-1 text-sm text-neutral-500">
+                Revisá las actividades disponibles para anotarte
+              </p>
+              <Button
+                variant="outline"
+                size="md"
+                className="mt-4 cursor-pointer"
+                onClick={() => navigate("/alumno/actividades")}
+              >
+                <ActivityIcon className="h-4 w-4" />
+                Explorar actividades
+              </Button>
+            </div>
           </Card>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {turnosHoy
               .sort((a, b) => (a.hora_inicio ?? "").localeCompare(b.hora_inicio ?? ""))
               .map((insc) => (
-                <Card key={insc.id} className="flex flex-col justify-between">
+                <Card key={insc.id} className="flex flex-col justify-between transition-all duration-200 hover:shadow-md">
                   <div>
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold text-neutral-900">
+                      <h3 className="text-base font-semibold text-neutral-900">
                         {insc.nombre_actividad ?? "Actividad"}
                       </h3>
                       <Badge variant="success">Inscripto</Badge>
                     </div>
-                    <div className="mt-3 space-y-1.5 text-sm text-neutral-500">
+                    <div className="mt-4 space-y-2 text-sm text-neutral-600">
                       {insc.hora_inicio && insc.hora_fin && (
-                        <div className="flex items-center gap-2">
-                          <ClockIcon className="h-4 w-4 shrink-0" />
-                          <span>
+                        <div className="flex items-center gap-2.5">
+                          <ClockIcon className="h-4 w-4 shrink-0 text-neutral-400" />
+                          <span className="font-medium">
                             {formatTime(insc.hora_inicio)} – {formatTime(insc.hora_fin)}
                           </span>
                         </div>
                       )}
                       {insc.sala && (
-                        <div className="flex items-center gap-2">
-                          <MapPinIcon className="h-4 w-4 shrink-0" />
+                        <div className="flex items-center gap-2.5">
+                          <MapPinIcon className="h-4 w-4 shrink-0 text-neutral-400" />
                           <span>{insc.sala}</span>
                         </div>
                       )}
                       {insc.nombre_profesor && (
-                        <div className="flex items-center gap-2">
-                          <UserIcon className="h-4 w-4 shrink-0" />
+                        <div className="flex items-center gap-2.5">
+                          <UserIcon className="h-4 w-4 shrink-0 text-neutral-400" />
                           <span>{insc.nombre_profesor}</span>
                         </div>
                       )}
@@ -202,6 +248,7 @@ export default function AlumnoDashboard() {
           <Button
             variant="outline"
             size="sm"
+            className="cursor-pointer"
             onClick={() => navigate("/notificaciones")}
           >
             Ver todas
@@ -217,10 +264,10 @@ export default function AlumnoDashboard() {
         ) : (
           <div className="space-y-2">
             {notificaciones.map((n) => (
-              <Card key={n.id} padding="sm">
+              <Card key={n.id} padding="sm" className="transition-all duration-200 hover:shadow-sm">
                 <div className="flex items-start gap-3">
                   <div
-                    className={`mt-1 h-2 w-2 shrink-0 rounded-full ${
+                    className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${
                       n.leida ? "bg-neutral-300" : "bg-primary-500"
                     }`}
                   />
@@ -238,39 +285,6 @@ export default function AlumnoDashboard() {
           </div>
         )}
       </div>
-
-      {/* Quick actions */}
-      <div>
-        <h2 className="mb-4 text-lg font-semibold text-neutral-900">
-          Accesos rápidos
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <QuickAction
-            label="Actividades"
-            description="Explorar y anotarte"
-            onClick={() => navigate("/alumno/actividades")}
-            icon={<ActivityIcon className="h-5 w-5" />}
-          />
-          <QuickAction
-            label="Mis Inscripciones"
-            description="Ver tus turnos"
-            onClick={() => navigate("/alumno/inscripciones")}
-            icon={<CalendarIcon className="h-5 w-5" />}
-          />
-          <QuickAction
-            label="Mis Pagos"
-            description="Historial y membresía"
-            onClick={() => navigate("/alumno/pagos")}
-            icon={<CreditCardIcon className="h-5 w-5" />}
-          />
-          <QuickAction
-            label="Mi Perfil"
-            description="Datos y evaluaciones"
-            onClick={() => navigate("/alumno/perfil")}
-            icon={<UserIcon className="h-5 w-5" />}
-          />
-        </div>
-      </div>
     </div>
   );
 }
@@ -280,27 +294,43 @@ export default function AlumnoDashboard() {
 function StatCard({
   label,
   value,
-  color = "default",
+  icon,
+  color = "primary",
 }: {
   label: string;
   value: number;
-  color?: "primary" | "accent" | "default";
+  icon: React.ReactNode;
+  color?: "primary" | "success" | "warning";
 }) {
-  const colorClasses = {
-    primary: "border-primary-200 bg-primary-50",
-    accent: "border-accent-200 bg-accent-50",
-    default: "border-neutral-200 bg-white",
-  };
-  const valueColor = {
-    primary: "text-primary-700",
-    accent: "text-accent-700",
-    default: "text-neutral-900",
+  const styles = {
+    primary: {
+      bg: "bg-primary-50 border-primary-100",
+      icon: "bg-primary-100 text-primary-600",
+      value: "text-primary-700",
+    },
+    success: {
+      bg: "bg-success-50 border-success-100",
+      icon: "bg-success-100 text-success-600",
+      value: "text-success-700",
+    },
+    warning: {
+      bg: "bg-warning-50 border-warning-100",
+      icon: "bg-warning-100 text-warning-600",
+      value: "text-warning-700",
+    },
   };
 
+  const s = styles[color];
+
   return (
-    <div className={`rounded-xl border p-5 ${colorClasses[color]}`}>
-      <p className="text-sm font-medium text-neutral-500">{label}</p>
-      <p className={`mt-1 text-3xl font-bold ${valueColor[color]}`}>{value}</p>
+    <div className={`flex items-center gap-4 rounded-xl border p-5 ${s.bg}`}>
+      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${s.icon}`}>
+        {icon}
+      </div>
+      <div>
+        <p className={`text-3xl font-bold ${s.value}`}>{value}</p>
+        <p className="text-sm font-medium text-neutral-600">{label}</p>
+      </div>
     </div>
   );
 }
@@ -310,19 +340,28 @@ function QuickAction({
   description,
   onClick,
   icon,
+  color = "primary",
 }: {
   label: string;
   description: string;
   onClick: () => void;
   icon: React.ReactNode;
+  color?: "primary" | "success" | "warning" | "neutral";
 }) {
+  const iconStyles = {
+    primary: "bg-primary-50 text-primary-600 group-hover:bg-primary-100",
+    success: "bg-success-50 text-success-600 group-hover:bg-success-100",
+    warning: "bg-warning-50 text-warning-600 group-hover:bg-warning-100",
+    neutral: "bg-neutral-100 text-neutral-600 group-hover:bg-neutral-200",
+  };
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group flex items-start gap-4 rounded-xl border border-neutral-200 bg-white p-5 text-left transition-all duration-150 hover:border-primary-300 hover:shadow-sm"
+      className="group flex flex-col items-center gap-3 rounded-xl border border-neutral-200 bg-white p-5 text-center transition-all duration-200 hover:border-primary-300 hover:shadow-md cursor-pointer sm:flex-row sm:items-start sm:text-left sm:gap-4"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100">
+      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors duration-200 ${iconStyles[color]}`}>
         {icon}
       </div>
       <div>
@@ -380,6 +419,14 @@ function CreditCardIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+    </svg>
+  );
+}
+
+function DumbbellIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5h10.5M6.75 16.5h10.5M3.75 10.5h1.5v3h-1.5v-3Zm0 0a1.5 1.5 0 0 1 1.5-1.5h0a1.5 1.5 0 0 1 1.5 1.5M3.75 13.5a1.5 1.5 0 0 0 1.5 1.5h0a1.5 1.5 0 0 0 1.5-1.5m10.5-3h1.5v3h-1.5v-3Zm0 0a1.5 1.5 0 0 1 1.5-1.5h0a1.5 1.5 0 0 1 1.5 1.5m-1.5 3a1.5 1.5 0 0 0 1.5 1.5h0a1.5 1.5 0 0 0 1.5-1.5M12 7.5v9" />
     </svg>
   );
 }

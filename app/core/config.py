@@ -14,8 +14,6 @@ class Settings(BaseSettings):
 
     CORS_ORIGINS: list[str] = ["http://localhost:5173"]
 
-    MP_ACCESS_TOKEN: str = ""
-
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
 

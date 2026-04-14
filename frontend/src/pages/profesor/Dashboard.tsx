@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { Card, Spinner, EmptyState, Badge, Button } from "../../components/ui";
+import { Card, Spinner, Badge, Button } from "../../components/ui";
 import { misTurnos, actividadesRef } from "../../services/profesorApi";
 import type { TurnoDetail } from "../../services/profesorApi";
 import type { Actividad } from "../../services/adminApi";
@@ -53,6 +53,11 @@ export default function ProfesorDashboard() {
     [turnosHoy],
   );
 
+  const actividadesUnicas = useMemo(
+    () => new Set(turnosHoy.map((t) => t.actividad_id)).size,
+    [turnosHoy],
+  );
+
   useEffect(() => {
     if (!user) return;
 
@@ -101,105 +106,157 @@ export default function ProfesorDashboard() {
     );
   }
 
+  const primerNombre = user?.nombre?.split(" ")[0] ?? user?.nombre ?? "";
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-neutral-900">
-          Buen día, {user?.nombre}
+    <div className="space-y-10">
+      {/* Welcome header */}
+      <div className="rounded-2xl bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-8 sm:px-8">
+        <h1 className="text-2xl font-bold text-white sm:text-3xl">
+          Hola, {primerNombre}
         </h1>
-        <p className="mt-1 text-sm text-neutral-500">
-          {hoyLabel} — Tus turnos de hoy y accesos rápidos
+        <p className="mt-2 text-primary-100 text-base">
+          {hoyLabel} &mdash; Este es el resumen de tus clases de hoy
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      {/* Stats overview */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
         <StatCard
-          label="Turnos hoy"
+          label="Clases hoy"
           value={turnosHoy.length}
+          icon={<ClockIcon className="h-6 w-6" />}
           color="primary"
         />
         <StatCard
-          label="Alumnos esperados"
+          label="Alumnos en tus clases"
           value={totalAlumnos}
-          color="accent"
+          icon={<UsersIcon className="h-6 w-6" />}
+          color="success"
         />
         <StatCard
-          label="Turnos totales"
-          value={turnosHoy.length}
-          sublabel="hoy"
-          color="default"
+          label="Actividades distintas"
+          value={actividadesUnicas}
+          icon={<ActivityIcon className="h-6 w-6" />}
+          color="warning"
         />
       </div>
 
-      {/* Turnos de hoy */}
+      {/* Quick actions */}
       <div>
         <h2 className="mb-4 text-lg font-semibold text-neutral-900">
-          Turnos de hoy
+          Accesos rápidos
+        </h2>
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
+          <QuickAction
+            label="Mis Turnos"
+            description="Ver todos tus turnos asignados"
+            onClick={() => navigate("/profesor/turnos")}
+            icon={<CalendarIcon className="h-6 w-6" />}
+            color="primary"
+          />
+          <QuickAction
+            label="Tomar Asistencia"
+            description="Registrar presencia en un turno"
+            onClick={() => navigate("/profesor/asistencia")}
+            icon={<CheckCircleIcon className="h-6 w-6" />}
+            color="success"
+          />
+          <QuickAction
+            label="Evaluaciones"
+            description="Evaluar alumnos y ver historial"
+            onClick={() => navigate("/profesor/evaluaciones")}
+            icon={<ClipboardIcon className="h-6 w-6" />}
+            color="warning"
+          />
+        </div>
+      </div>
+
+      {/* Today's classes */}
+      <div>
+        <h2 className="mb-4 text-lg font-semibold text-neutral-900">
+          Tus clases de hoy
         </h2>
 
         {turnosHoy.length === 0 ? (
-          <Card>
-            <EmptyState
-              title="Sin turnos hoy"
-              description={`No tenés turnos asignados para ${hoyLabel.toLowerCase()}.`}
-              action={
-                <Button
-                  variant="outline"
-                  onClick={() => navigate("/profesor/turnos")}
-                >
-                  Ver todos mis turnos
-                </Button>
-              }
-            />
+          <Card className="border-dashed">
+            <div className="flex flex-col items-center py-8 text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100">
+                <CalendarIcon className="h-6 w-6 text-neutral-400" />
+              </div>
+              <p className="font-medium text-neutral-700">No tenés clases hoy</p>
+              <p className="mt-1 text-sm text-neutral-500">
+                No hay turnos asignados para {hoyLabel.toLowerCase()}.
+              </p>
+              <Button
+                variant="outline"
+                size="md"
+                className="mt-4 cursor-pointer"
+                onClick={() => navigate("/profesor/turnos")}
+              >
+                <CalendarIcon className="h-4 w-4" />
+                Ver todos mis turnos
+              </Button>
+            </div>
           </Card>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {turnosHoy
               .sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio))
               .map((turno) => {
                 const actividad = actividadMap.get(turno.actividad_id);
+                const ocupacion = turno.cupo_maximo > 0
+                  ? Math.round((turno.inscritos / turno.cupo_maximo) * 100)
+                  : 0;
+                const badgeVariant =
+                  ocupacion >= 90 ? "danger" : turno.inscritos > 0 ? "success" : "default";
+
                 return (
-                  <Card key={turno.id} className="flex flex-col justify-between">
+                  <Card
+                    key={turno.id}
+                    className="flex flex-col justify-between transition-all duration-200 hover:shadow-md"
+                  >
                     <div>
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-semibold text-neutral-900">
+                        <h3 className="text-base font-semibold text-neutral-900">
                           {actividad?.nombre ?? `Actividad #${turno.actividad_id}`}
                         </h3>
-                        <Badge variant={turno.inscritos > 0 ? "primary" : "default"}>
+                        <Badge variant={badgeVariant}>
                           {turno.inscritos}/{turno.cupo_maximo}
                         </Badge>
                       </div>
-                      <div className="mt-3 space-y-1.5 text-sm text-neutral-500">
-                        <div className="flex items-center gap-2">
-                          <ClockIcon className="h-4 w-4 shrink-0" />
-                          <span>
+
+                      <div className="mt-4 space-y-2 text-sm text-neutral-600">
+                        <div className="flex items-center gap-2.5">
+                          <ClockIcon className="h-4 w-4 shrink-0 text-neutral-400" />
+                          <span className="font-medium">
                             {formatTime(turno.hora_inicio)} – {formatTime(turno.hora_fin)}
                           </span>
                         </div>
                         {turno.sala && (
-                          <div className="flex items-center gap-2">
-                            <MapPinIcon className="h-4 w-4 shrink-0" />
+                          <div className="flex items-center gap-2.5">
+                            <MapPinIcon className="h-4 w-4 shrink-0 text-neutral-400" />
                             <span>{turno.sala}</span>
                           </div>
                         )}
-                        <div className="flex items-center gap-2">
-                          <UsersSmIcon className="h-4 w-4 shrink-0" />
+                        <div className="flex items-center gap-2.5">
+                          <UsersIcon className="h-4 w-4 shrink-0 text-neutral-400" />
                           <span>
                             {turno.inscritos} alumno{turno.inscritos !== 1 ? "s" : ""} inscrito{turno.inscritos !== 1 ? "s" : ""}
                           </span>
                         </div>
                       </div>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-neutral-100">
+
+                    <div className="mt-4 border-t border-neutral-100 pt-4">
                       <Button
                         size="sm"
-                        className="w-full"
+                        className="w-full cursor-pointer"
                         onClick={() =>
                           navigate(`/profesor/asistencia?turno=${turno.id}`)
                         }
                       >
+                        <CheckCircleIcon className="h-4 w-4" />
                         Tomar asistencia
                       </Button>
                     </div>
@@ -208,33 +265,6 @@ export default function ProfesorDashboard() {
               })}
           </div>
         )}
-      </div>
-
-      {/* Quick actions */}
-      <div>
-        <h2 className="mb-4 text-lg font-semibold text-neutral-900">
-          Accesos rápidos
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-3">
-          <QuickAction
-            label="Mis Turnos"
-            description="Ver todos tus turnos asignados"
-            onClick={() => navigate("/profesor/turnos")}
-            icon={<CalendarIcon className="h-5 w-5" />}
-          />
-          <QuickAction
-            label="Tomar Asistencia"
-            description="Registrar asistencia de un turno"
-            onClick={() => navigate("/profesor/asistencia")}
-            icon={<ChecklistIcon className="h-5 w-5" />}
-          />
-          <QuickAction
-            label="Evaluaciones"
-            description="Evaluar alumnos y ver historial"
-            onClick={() => navigate("/profesor/evaluaciones")}
-            icon={<ClipboardIcon className="h-5 w-5" />}
-          />
-        </div>
       </div>
     </div>
   );
@@ -245,38 +275,43 @@ export default function ProfesorDashboard() {
 function StatCard({
   label,
   value,
-  sublabel,
-  color = "default",
+  icon,
+  color = "primary",
 }: {
   label: string;
   value: number;
-  sublabel?: string;
-  color?: "primary" | "accent" | "default";
+  icon: React.ReactNode;
+  color?: "primary" | "success" | "warning";
 }) {
-  const colorClasses = {
-    primary: "border-primary-200 bg-primary-50",
-    accent: "border-accent-200 bg-accent-50",
-    default: "border-neutral-200 bg-white",
-  };
-  const valueColor = {
-    primary: "text-primary-700",
-    accent: "text-accent-700",
-    default: "text-neutral-900",
+  const styles = {
+    primary: {
+      bg: "bg-primary-50 border-primary-100",
+      icon: "bg-primary-100 text-primary-600",
+      value: "text-primary-700",
+    },
+    success: {
+      bg: "bg-success-50 border-success-100",
+      icon: "bg-success-100 text-success-600",
+      value: "text-success-700",
+    },
+    warning: {
+      bg: "bg-warning-50 border-warning-100",
+      icon: "bg-warning-100 text-warning-600",
+      value: "text-warning-700",
+    },
   };
 
+  const s = styles[color];
+
   return (
-    <div
-      className={`rounded-xl border p-5 ${colorClasses[color]}`}
-    >
-      <p className="text-sm font-medium text-neutral-500">{label}</p>
-      <p className={`mt-1 text-3xl font-bold ${valueColor[color]}`}>
-        {value}
-        {sublabel && (
-          <span className="ml-1 text-sm font-normal text-neutral-400">
-            {sublabel}
-          </span>
-        )}
-      </p>
+    <div className={`flex items-center gap-4 rounded-xl border p-5 ${s.bg}`}>
+      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${s.icon}`}>
+        {icon}
+      </div>
+      <div>
+        <p className={`text-3xl font-bold ${s.value}`}>{value}</p>
+        <p className="text-sm font-medium text-neutral-600">{label}</p>
+      </div>
     </div>
   );
 }
@@ -286,19 +321,27 @@ function QuickAction({
   description,
   onClick,
   icon,
+  color = "primary",
 }: {
   label: string;
   description: string;
   onClick: () => void;
   icon: React.ReactNode;
+  color?: "primary" | "success" | "warning";
 }) {
+  const iconStyles = {
+    primary: "bg-primary-50 text-primary-600 group-hover:bg-primary-100",
+    success: "bg-success-50 text-success-600 group-hover:bg-success-100",
+    warning: "bg-warning-50 text-warning-600 group-hover:bg-warning-100",
+  };
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group flex items-start gap-4 rounded-xl border border-neutral-200 bg-white p-5 text-left transition-all duration-150 hover:border-primary-300 hover:shadow-sm"
+      className="group flex flex-col items-center gap-3 rounded-xl border border-neutral-200 bg-white p-5 text-center transition-all duration-200 hover:border-primary-300 hover:shadow-md cursor-pointer sm:flex-row sm:items-start sm:text-left sm:gap-4"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100">
+      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors duration-200 ${iconStyles[color]}`}>
         {icon}
       </div>
       <div>
@@ -328,7 +371,7 @@ function MapPinIcon({ className }: { className?: string }) {
   );
 }
 
-function UsersSmIcon({ className }: { className?: string }) {
+function UsersIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
@@ -344,10 +387,18 @@ function CalendarIcon({ className }: { className?: string }) {
   );
 }
 
-function ChecklistIcon({ className }: { className?: string }) {
+function CheckCircleIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
+  );
+}
+
+function ActivityIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
     </svg>
   );
 }
