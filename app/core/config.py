@@ -1,3 +1,5 @@
+import sys
+
 from pydantic_settings import BaseSettings
 
 
@@ -14,7 +16,18 @@ class Settings(BaseSettings):
 
     CORS_ORIGINS: list[str] = ["http://localhost:5173"]
 
+    RATE_LIMIT_GENERAL: str = "100/15minutes"
+    RATE_LIMIT_AUTH: str = "5/15minutes"
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
 
 settings = Settings()
+
+if settings.SECRET_KEY == "change-me-in-production" and not settings.DEBUG:
+    print(
+        "FATAL: SECRET_KEY must be changed in production. "
+        "Set SECRET_KEY in your .env file or set DEBUG=true for development.",
+        file=sys.stderr,
+    )
+    sys.exit(1)

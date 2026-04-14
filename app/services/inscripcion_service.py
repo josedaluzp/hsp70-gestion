@@ -82,10 +82,7 @@ async def cancelar_inscripcion(
     turno_id = inscripcion.turno_id
     inscripcion.estado = EstadoInscripcion.CANCELADA
 
-    if inscripcion.estado == EstadoInscripcion.CANCELADA:
-        # Promote from waitlist
-        await _promote_from_waitlist(db, turno_id)
-
+    await _promote_from_waitlist(db, turno_id)
     await db.commit()
 
 

@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useCallback, useEffect, useRef } from "react";
 
 interface ModalProps {
   open: boolean;
@@ -16,6 +16,9 @@ const sizeClasses = {
   lg: "max-w-2xl",
 };
 
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export default function Modal({
   open,
   onClose,
@@ -26,22 +29,49 @@ export default function Modal({
   size = "md",
 }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  const trapFocus = useCallback((e: KeyboardEvent) => {
+    if (e.key !== "Tab" || !dialogRef.current) return;
+    const focusable = dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }, []);
 
   useEffect(() => {
     if (!open) return;
 
-    function handleEscape(e: KeyboardEvent) {
+    previousFocusRef.current = document.activeElement as HTMLElement;
+
+    function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
+      trapFocus(e);
     }
 
-    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";
 
+    const timer = setTimeout(() => {
+      const firstFocusable = dialogRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      firstFocusable?.focus();
+    }, 50);
+
     return () => {
-      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
+      clearTimeout(timer);
+      previousFocusRef.current?.focus();
     };
-  }, [open, onClose]);
+  }, [open, onClose, trapFocus]);
 
   if (!open) return null;
 
@@ -60,6 +90,7 @@ export default function Modal({
       aria-labelledby="modal-title"
     >
       <div
+        ref={dialogRef}
         className={`
           w-full ${sizeClasses[size]} rounded-xl bg-white shadow-lg
           overflow-hidden
