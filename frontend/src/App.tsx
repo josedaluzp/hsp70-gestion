@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./layouts/MainLayout";
+import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -27,53 +28,51 @@ import AdminRutinas from "./pages/admin/Rutinas";
 export default function App() {
   return (
     <ErrorBoundary>
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          {/* Protected routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<MainLayout />}>
-              <Route index element={<Dashboard />} />
+            {/* Protected routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<MainLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
 
-              {/* Alumno routes */}
-              <Route element={<ProtectedRoute allowedRoles={["alumno"]} />}>
-                <Route path="alumno/dashboard" element={<AlumnoDashboard />} />
-                <Route path="alumno/clases" element={<AlumnoMisClases />} />
-                <Route path="alumno/planes" element={<AlumnoPlanes />} />
-                <Route path="alumno/perfil" element={<AlumnoPerfil />} />
-                <Route path="alumno/rutinas" element={<AlumnoRutinas />} />
-                <Route path="alumno/rutinas/:rutinaId" element={<AlumnoRutinaDetalle />} />
+                <Route element={<ProtectedRoute allowedRoles={["alumno"]} />}>
+                  <Route path="alumno/dashboard" element={<AlumnoDashboard />} />
+                  <Route path="alumno/clases" element={<AlumnoMisClases />} />
+                  <Route path="alumno/planes" element={<AlumnoPlanes />} />
+                  <Route path="alumno/perfil" element={<AlumnoPerfil />} />
+                  <Route path="alumno/rutinas" element={<AlumnoRutinas />} />
+                  <Route path="alumno/rutinas/:rutinaId" element={<AlumnoRutinaDetalle />} />
+                </Route>
+
+                <Route element={<ProtectedRoute allowedRoles={["profesor"]} />}>
+                  <Route path="profesor/dashboard" element={<ProfesorDashboard />} />
+                  <Route path="profesor/turnos" element={<ProfesorTurnos />} />
+                  <Route path="profesor/asistencia" element={<ProfesorAsistencia />} />
+                  <Route path="profesor/evaluaciones" element={<ProfesorEvaluaciones />} />
+                  <Route path="profesor/rutinas" element={<AdminRutinas />} />
+                </Route>
+
+                <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                  <Route path="admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="admin/usuarios" element={<Usuarios />} />
+                  <Route path="admin/actividades" element={<Actividades />} />
+                  <Route path="admin/turnos" element={<Turnos />} />
+                  <Route path="admin/planes" element={<Planes />} />
+                  <Route path="admin/rutinas" element={<AdminRutinas />} />
+                </Route>
+
+                <Route path="*" element={<NotFound />} />
               </Route>
-
-              {/* Profesor routes */}
-              <Route element={<ProtectedRoute allowedRoles={["profesor"]} />}>
-                <Route path="profesor/dashboard" element={<ProfesorDashboard />} />
-                <Route path="profesor/turnos" element={<ProfesorTurnos />} />
-                <Route path="profesor/asistencia" element={<ProfesorAsistencia />} />
-                <Route path="profesor/evaluaciones" element={<ProfesorEvaluaciones />} />
-                <Route path="profesor/rutinas" element={<AdminRutinas />} />
-              </Route>
-
-              {/* Admin routes */}
-              <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-                <Route path="admin/dashboard" element={<AdminDashboard />} />
-                <Route path="admin/usuarios" element={<Usuarios />} />
-                <Route path="admin/actividades" element={<Actividades />} />
-                <Route path="admin/turnos" element={<Turnos />} />
-                <Route path="admin/planes" element={<Planes />} />
-                <Route path="admin/rutinas" element={<AdminRutinas />} />
-              </Route>
-
-              <Route path="*" element={<NotFound />} />
             </Route>
-          </Route>
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
     </ErrorBoundary>
   );
 }
