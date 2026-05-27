@@ -25,7 +25,7 @@ export default function Input({
       {label && (
         <label
           htmlFor={id}
-          className="block text-sm font-medium text-neutral-700"
+          className="block text-sm font-medium text-neutral-300"
         >
           {label}
         </label>
@@ -43,16 +43,16 @@ export default function Input({
             hasError ? `${id}-error` : helperText ? `${id}-helper` : undefined
           }
           className={`
-            block w-full rounded-lg border bg-white px-3 py-2 text-sm
-            text-neutral-800 placeholder-neutral-400
+            block w-full rounded-lg border bg-neutral-900/60 px-3 py-2 text-sm
+            text-neutral-100 placeholder-neutral-500
             transition-colors duration-150
             outline-none focus:ring-2 focus:ring-offset-0
-            disabled:bg-neutral-50 disabled:text-neutral-500 disabled:cursor-not-allowed
+            disabled:bg-neutral-800 disabled:text-neutral-600 disabled:cursor-not-allowed
             ${icon ? "pl-10" : ""}
             ${
               hasError
                 ? "border-danger-500 focus:border-danger-500 focus:ring-danger-500/30"
-                : "border-neutral-300 focus:border-primary-500 focus:ring-primary-500/30"
+                : "border-neutral-600 focus:border-primary-500 focus:ring-primary-500/30"
             }
             ${className}
           `}

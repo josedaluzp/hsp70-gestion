@@ -27,8 +27,8 @@ from app.models import (
     Usuario,
 )
 
-TODAY = date(2026, 3, 18)
-NOW = datetime(2026, 3, 18, 10, 0, tzinfo=timezone.utc)
+TODAY = date.today()
+NOW = datetime.now(tz=timezone.utc)
 
 
 # ---------------------------------------------------------------------------
@@ -40,39 +40,88 @@ ADMIN_DATA = {
     "apellido": "HSP70",
     "email": "admin@hsp70.com",
     "password": "admin123",
-    "telefono": "+54 11 5555-0001",
+    "telefono": "+549 297 6257545",
     "dni": "20300001",
     "fecha_nacimiento": date(1985, 6, 15),
     "rol": RolUsuario.ADMIN,
 }
 
+# Directors with admin access who also work as professionals at the center
+DIRECTORES_DATA = [
+    {
+        "nombre": "Yanina",
+        "apellido": "Figuerao",
+        "email": "yanina.figuerao@hsp70.com",
+        "password": "admin123",
+        "telefono": "+549 297 6257545",
+        "dni": "25100001",
+        "fecha_nacimiento": date(1983, 4, 12),
+    },
+    {
+        "nombre": "Ángel",
+        "apellido": "Da Luz Pereira",
+        "email": "angel.daluz@hsp70.com",
+        "password": "admin123",
+        "telefono": "+549 297 6257546",
+        "dni": "24200002",
+        "fecha_nacimiento": date(1981, 9, 7),
+    },
+]
+
 PROFESORES_DATA = [
     {
-        "nombre": "Martín",
-        "apellido": "Rodríguez",
-        "email": "martin.rodriguez@hsp70.com",
+        "nombre": "Facundo",
+        "apellido": "Nieva",
+        "email": "facundo.nieva@hsp70.com",
         "password": "profesor123",
-        "telefono": "+54 11 5555-1001",
-        "dni": "28456001",
-        "fecha_nacimiento": date(1982, 3, 22),
+        "telefono": "+549 297 6257547",
+        "dni": "31456001",
+        "fecha_nacimiento": date(1990, 3, 22),
     },
     {
-        "nombre": "Carolina",
-        "apellido": "Fernández",
-        "email": "carolina.fernandez@hsp70.com",
+        "nombre": "Bruno",
+        "apellido": "Rubio",
+        "email": "bruno.rubio@hsp70.com",
         "password": "profesor123",
-        "telefono": "+54 11 5555-1002",
-        "dni": "30789002",
-        "fecha_nacimiento": date(1986, 11, 8),
+        "telefono": "+549 297 6257548",
+        "dni": "32789002",
+        "fecha_nacimiento": date(1992, 11, 8),
     },
     {
-        "nombre": "Alejandro",
-        "apellido": "García",
-        "email": "alejandro.garcia@hsp70.com",
+        "nombre": "Maximiliano",
+        "apellido": "Tögel",
+        "email": "maximiliano.togel@hsp70.com",
         "password": "profesor123",
-        "telefono": "+54 11 5555-1003",
-        "dni": "27123003",
-        "fecha_nacimiento": date(1980, 7, 30),
+        "telefono": "+549 297 6257549",
+        "dni": "29123003",
+        "fecha_nacimiento": date(1988, 7, 30),
+    },
+    {
+        "nombre": "Manuel",
+        "apellido": "Pazos Espín",
+        "email": "manuel.pazos@hsp70.com",
+        "password": "profesor123",
+        "telefono": "+549 297 6257550",
+        "dni": "27456004",
+        "fecha_nacimiento": date(1985, 2, 14),
+    },
+    {
+        "nombre": "Walter",
+        "apellido": "Ríos",
+        "email": "walter.rios@hsp70.com",
+        "password": "profesor123",
+        "telefono": "+549 297 6257551",
+        "dni": "30789005",
+        "fecha_nacimiento": date(1989, 6, 20),
+    },
+    {
+        "nombre": "Gabriel",
+        "apellido": "Velázquez",
+        "email": "gabriel.velazquez@hsp70.com",
+        "password": "profesor123",
+        "telefono": "+549 297 6257552",
+        "dni": "28123006",
+        "fecha_nacimiento": date(1987, 10, 5),
     },
 ]
 
@@ -299,6 +348,12 @@ async def seed() -> None:
         admin = _make_user(ADMIN_DATA, RolUsuario.ADMIN)
         db.add(admin)
 
+        directores = []
+        for d in DIRECTORES_DATA:
+            director = _make_user(d, RolUsuario.ADMIN)
+            directores.append(director)
+            db.add(director)
+
         profesores = []
         for p in PROFESORES_DATA:
             prof = _make_user(p, RolUsuario.PROFESOR)
@@ -318,7 +373,7 @@ async def seed() -> None:
             db.add(alumno)
 
         await db.flush()
-        print(f"Created {1 + len(profesores) + len(recepcionistas) + len(alumnos)} users")
+        print(f"Created {1 + len(directores) + len(profesores) + len(recepcionistas) + len(alumnos)} users")
 
         # --- Activities ---
         actividades = []

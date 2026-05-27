@@ -21,8 +21,8 @@ export default function Card({
   return (
     <div
       className={`
-        rounded-xl border border-neutral-200 bg-white
-        shadow-sm
+        rounded-xl border border-neutral-700/60 bg-neutral-800
+        shadow-md
         ${paddingClasses[padding]}
         ${className}
       `}
@@ -42,9 +42,9 @@ export function CardHeader({ title, description, action }: CardHeaderProps) {
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h3 className="text-base font-semibold text-neutral-900">{title}</h3>
+        <h3 className="text-base font-bold text-neutral-100">{title}</h3>
         {description && (
-          <p className="mt-1 text-sm text-neutral-500">{description}</p>
+          <p className="mt-1 text-sm text-neutral-400">{description}</p>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}

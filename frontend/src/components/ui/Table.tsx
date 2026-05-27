@@ -60,13 +60,13 @@ export default function Table<T extends object>({
     <div className={`overflow-x-auto ${className}`}>
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-neutral-200">
+          <tr className="border-b border-neutral-700">
             {columns.map((col) => (
               <th
                 key={col.key}
                 className={`
-                  px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-500
-                  ${col.sortable ? "cursor-pointer select-none hover:text-neutral-700" : ""}
+                  px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400
+                  ${col.sortable ? "cursor-pointer select-none hover:text-neutral-200" : ""}
                   ${col.className ?? ""}
                 `}
                 onClick={col.sortable ? () => handleSort(col.key) : undefined}
@@ -79,16 +79,16 @@ export default function Table<T extends object>({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-neutral-100">
+        <tbody className="divide-y divide-neutral-700/50">
           {sortedData.map((row) => (
             <tr
               key={keyExtractor(row)}
-              className="transition-colors duration-100 hover:bg-neutral-50"
+              className="transition-colors duration-100 hover:bg-neutral-700/30"
             >
               {columns.map((col) => (
                 <td
                   key={col.key}
-                  className={`px-4 py-3 text-neutral-700 ${col.className ?? ""}`}
+                  className={`px-4 py-3 text-neutral-200 ${col.className ?? ""}`}
                 >
                   {col.render
                     ? col.render(row)
