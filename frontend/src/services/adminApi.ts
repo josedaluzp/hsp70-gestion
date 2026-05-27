@@ -223,12 +223,19 @@ export const reportes = {
 
 // ─── Stats ──────────────────────────────────────────────────────────────────
 
+export interface AttendanceDay {
+  fecha: string;
+  presentes: number;
+  ausentes: number;
+}
+
 export interface DashboardStats {
   total_alumnos: number;
   total_profesores: number;
   total_actividades: number;
   turnos_hoy: number;
   inscripciones_activas: number;
+  asistencia_semanal: AttendanceDay[];
 }
 
 export const stats = {

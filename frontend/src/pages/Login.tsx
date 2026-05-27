@@ -46,45 +46,64 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
-      <div className="w-full max-w-sm">
+    <div className="flex min-h-screen items-center justify-center bg-neutral-900 px-4">
+      {/* Background glow */}
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 60% 20%, rgba(249,115,22,0.08) 0%, transparent 60%), radial-gradient(ellipse at 30% 80%, rgba(34,197,94,0.05) 0%, transparent 50%)",
+        }}
+      />
+
+      <div className="relative w-full max-w-sm">
         {/* Brand */}
         <div className="mb-10 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-500">
-            <span className="text-xl font-bold text-white">H</span>
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-lg shadow-primary-500/30">
+            <span className="font-display text-2xl font-black text-white tracking-wide">H</span>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
-            HSP-70
+          <h1 className="font-display text-4xl font-black tracking-widest text-neutral-50">
+            HSP<span className="text-primary-500">-70</span>
           </h1>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-2 text-sm text-neutral-400">
             Ingresá a tu cuenta
           </p>
         </div>
 
         {/* Form card */}
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-neutral-700/60 bg-neutral-800/80 p-7 shadow-xl backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="space-y-5">
-            <Input
-              label="Email"
-              type="email"
-              placeholder="tu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              autoFocus
-            />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-neutral-300">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="tu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                autoFocus
+                className="block w-full rounded-lg border border-neutral-600 bg-neutral-900/60 px-3 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 outline-none transition-colors duration-150 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25"
+              />
+            </div>
 
-            <Input
-              label="Contraseña"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-            />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-neutral-300">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                className="block w-full rounded-lg border border-neutral-600 bg-neutral-900/60 px-3 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 outline-none transition-colors duration-150 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25"
+              />
+            </div>
 
             {error && (
-              <div className="rounded-lg bg-danger-50 px-4 py-3 text-sm text-danger-700">
+              <div className="rounded-lg border border-danger-500/30 bg-danger-500/10 px-4 py-3 text-sm text-danger-400">
                 {error}
               </div>
             )}
@@ -92,7 +111,7 @@ export default function Login() {
             <Button
               type="submit"
               loading={loading}
-              className="w-full"
+              className="w-full !py-2.5 !text-base !font-bold tracking-wide shadow-lg shadow-primary-500/20"
             >
               Iniciar sesión
             </Button>
@@ -104,7 +123,7 @@ export default function Login() {
           ¿No tenés cuenta?{" "}
           <Link
             to="/register"
-            className="font-medium text-primary-500 hover:text-primary-600 transition-colors"
+            className="font-semibold text-primary-400 hover:text-primary-300 transition-colors"
           >
             Registrate
           </Link>

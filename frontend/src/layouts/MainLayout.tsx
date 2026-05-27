@@ -10,9 +10,7 @@ interface NavItem {
   section?: string;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { to: "/", label: "Dashboard", icon: DashboardIcon },
-];
+const NAV_ITEMS: NavItem[] = [];
 
 const ALUMNO_NAV_ITEMS: NavItem[] = [
   { to: "/alumno/dashboard", label: "Mi Panel", icon: DashboardIcon, section: "alumno" },
@@ -73,7 +71,7 @@ export default function MainLayout() {
   }, [isAdmin, isProfesor, isAlumno]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50">
+    <div className="flex h-screen overflow-hidden bg-neutral-900">
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
@@ -210,11 +208,11 @@ export default function MainLayout() {
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="flex h-16 shrink-0 items-center gap-4 border-b border-neutral-200 bg-white px-4 lg:px-8">
+        <header className="flex h-16 shrink-0 items-center gap-4 border-b border-neutral-800 bg-neutral-900 px-4 lg:px-8">
           {/* Mobile menu toggle */}
           <button
             type="button"
-            className="rounded-lg p-2 text-neutral-500 hover:bg-neutral-100 lg:hidden"
+            className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-800 lg:hidden"
             onClick={() => setMobileOpen(true)}
             aria-label="Abrir menú"
           >
@@ -224,7 +222,7 @@ export default function MainLayout() {
           {/* Desktop sidebar collapse toggle */}
           <button
             type="button"
-            className="hidden lg:flex rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition-colors duration-150"
+            className="hidden lg:flex rounded-lg p-2 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200 transition-colors duration-150"
             onClick={() => setCollapsed((c) => !c)}
             aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
           >
@@ -235,7 +233,7 @@ export default function MainLayout() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+        <main className="flex-1 overflow-y-auto bg-neutral-900 p-4 lg:p-8">
           <Outlet />
         </main>
       </div>
