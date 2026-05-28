@@ -1,85 +1,106 @@
+import { Link } from "react-router-dom";
+
 export default function LandingHero() {
-  const handleScroll = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden bg-black">
-      {/* Video background — reemplazar src con video Higgsfield cuando esté disponible */}
-      <video
-        className="absolute inset-0 w-full h-full object-cover opacity-40"
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster="/images/hero-poster.jpg"
-      >
-        <source src="/images/hero-video.mp4" type="video/mp4" />
-      </video>
-
-      {/* Grid overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(90deg, rgba(249,115,22,0.04) 0px, rgba(249,115,22,0.04) 1px, transparent 1px, transparent 64px), repeating-linear-gradient(0deg, rgba(249,115,22,0.025) 0px, rgba(249,115,22,0.025) 1px, transparent 1px, transparent 64px)",
-        }}
-      />
-
-      {/* Glow */}
+    <section
+      className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden px-6 pt-24 pb-20"
+      style={{ backgroundColor: "var(--color-white-canvas)" }}
+    >
+      {/* Decorative radial glow — DESIGN.md: subtle warm glow, no heavy gradients */}
       <div
         className="absolute pointer-events-none"
         style={{
-          top: "40%", left: "50%", transform: "translate(-50%, -50%)",
+          top: "30%", left: "50%",
+          transform: "translate(-50%, -50%)",
           width: "600px", height: "400px",
-          background: "radial-gradient(ellipse, rgba(249,115,22,0.1) 0%, transparent 65%)",
+          background: "radial-gradient(ellipse, rgba(249,115,22,0.06) 0%, transparent 70%)",
         }}
       />
 
-      {/* Content */}
-      <div className="relative z-10 px-4 sm:px-6">
-        <p className="text-xs font-black tracking-[0.5em] text-orange-500 uppercase mb-6">
+      <div className="relative z-10 max-w-4xl mx-auto">
+        {/* Eyebrow — caption size, orange-ember, spaced */}
+        <p
+          className="text-xs font-semibold uppercase mb-8"
+          style={{
+            fontFamily: "var(--font-landing)",
+            color: "var(--color-orange-ember)",
+            letterSpacing: "0.15em",
+          }}
+        >
           HSP-70 · Comodoro Rivadavia · Chubut
         </p>
 
-        <h1 className="font-black uppercase leading-none mb-4">
-          <span
-            className="block text-6xl sm:text-8xl lg:text-9xl tracking-tight"
-            style={{ color: "transparent", WebkitTextStroke: "1.5px rgba(249,115,22,0.5)" }}
-          >
-            SALUD
-          </span>
-          <span className="block text-6xl sm:text-8xl lg:text-9xl tracking-tight text-orange-500">
-            &amp;
-          </span>
-          <span className="block text-6xl sm:text-8xl lg:text-9xl tracking-tight text-white">
-            CIENCIA
-          </span>
+        {/* Display-xl headline — DESIGN.md: 78px, weight 300, tracking -2.808px */}
+        <h1
+          style={{
+            fontFamily: "var(--font-landing)",
+            fontSize: "clamp(52px, 10vw, 78px)",
+            fontWeight: 300,
+            lineHeight: 0.9,
+            letterSpacing: "-0.036em",
+            color: "var(--color-dark-charcoal)",
+            marginBottom: "24px",
+          }}
+        >
+          Salud{" "}
+          <span style={{ color: "var(--color-orange-ember)" }}>&amp;</span>
+          <br className="hidden sm:block" />
+          {" "}Ciencia
         </h1>
 
-        <p className="text-xs font-bold tracking-[0.3em] text-neutral-500 uppercase mt-6 mb-8">
-          Centro Fitness · Rendimiento Físico
+        {/* Subheading — body 16px, muted-stone */}
+        <p
+          className="mx-auto mb-10"
+          style={{
+            fontFamily: "var(--font-landing)",
+            fontSize: "17px",
+            fontWeight: 400,
+            color: "var(--color-muted-stone)",
+            lineHeight: 1.6,
+            maxWidth: "440px",
+          }}
+        >
+          Centro de fitness y rendimiento físico. Reservá clases online, sin mensualidades forzadas.
         </p>
 
+        {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={() => handleScroll("actividades")}
-            className="bg-orange-500 text-black px-8 py-4 text-sm font-black tracking-widest uppercase hover:bg-orange-400 transition-colors cursor-pointer"
+          {/* Primary — orange-ember, shadow-amp-cta, 24px radius */}
+          <Link
+            to="/register"
+            className="cursor-pointer text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90"
+            style={{
+              backgroundColor: "var(--color-orange-ember)",
+              borderRadius: "var(--radius-amp-btn)",
+              padding: "14px 32px",
+              boxShadow: "var(--shadow-amp-cta)",
+              fontFamily: "var(--font-landing)",
+            }}
           >
-            VER ACTIVIDADES ↓
-          </button>
+            Empezar gratis
+          </Link>
+          {/* Secondary — Solid Nav Button: light-mist bg, dark-charcoal text */}
           <button
-            onClick={() => handleScroll("planes")}
-            className="border border-neutral-700 text-neutral-400 px-8 py-4 text-sm font-bold tracking-widest uppercase hover:border-neutral-500 hover:text-white transition-colors cursor-pointer"
+            onClick={() => document.getElementById("actividades")?.scrollIntoView({ behavior: "smooth" })}
+            className="cursor-pointer text-sm font-medium transition-colors duration-200 hover:opacity-80"
+            style={{
+              backgroundColor: "var(--color-light-mist)",
+              color: "var(--color-dark-charcoal)",
+              borderRadius: "var(--radius-amp-btn)",
+              padding: "14px 32px",
+              fontFamily: "var(--font-landing)",
+            }}
           >
-            NUESTROS PLANES
+            Ver actividades
           </button>
         </div>
 
         {/* Scroll indicator */}
-        <div className="mt-16 flex flex-col items-center gap-2">
-          <div className="w-px h-8 bg-orange-500/30 animate-pulse" />
-          <span className="text-[10px] tracking-[0.4em] text-neutral-700 uppercase">scroll</span>
+        <div className="mt-20 flex flex-col items-center gap-2">
+          <div className="w-px h-10 animate-pulse" style={{ backgroundColor: "var(--color-light-border)" }} />
+          <span className="text-xs font-medium uppercase" style={{ color: "var(--color-muted-stone)", letterSpacing: "0.2em", fontFamily: "var(--font-landing)" }}>
+            scroll
+          </span>
         </div>
       </div>
     </section>
