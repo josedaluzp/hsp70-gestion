@@ -3,7 +3,6 @@ import { Link, useNavigate, Navigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import type { RegisterData } from "../context/authTypes";
 import { Button, Input } from "../components/ui";
-import axios from "axios";
 
 interface FormErrors {
   nombre?: string;
@@ -92,21 +91,15 @@ export default function Register() {
         state: { registered: true },
       });
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const detail = err.response?.data?.detail;
-        if (err.response?.status === 409) {
-          if (typeof detail === "string" && detail.includes("DNI")) {
-            setServerError("Ese DNI ya está registrado.");
-          } else {
-            setServerError("Ese email ya está registrado.");
-          }
-        } else if (err.response?.status === 422) {
-          setServerError("Revisá los datos ingresados.");
-        } else {
-          setServerError("Error del servidor. Intentá de nuevo más tarde.");
-        }
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("ya está registrado") || msg.includes("already registered")) {
+        setServerError("Ese email ya está registrado.");
+      } else if (msg.includes("DNI")) {
+        setServerError("Ese DNI ya está registrado.");
+      } else if (msg) {
+        setServerError(msg);
       } else {
-        setServerError("No se pudo conectar al servidor.");
+        setServerError("Error del servidor. Intentá de nuevo más tarde.");
       }
     } finally {
       setLoading(false);

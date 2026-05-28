@@ -2,7 +2,6 @@ import { type FormEvent, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { Button, Input } from "../components/ui";
-import axios from "axios";
 
 export default function Login() {
   const { user, login } = useAuth();
@@ -28,17 +27,13 @@ export default function Login() {
     try {
       await login(email, password);
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const status = err.response?.status;
-        if (status === 401) {
-          setError("Email o contraseña incorrectos.");
-        } else if (status === 403) {
-          setError("Tu cuenta está desactivada. Contactá al administrador.");
-        } else {
-          setError("Error del servidor. Intentá de nuevo más tarde.");
-        }
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("Invalid login credentials") || msg.includes("invalid")) {
+        setError("Email o contraseña incorrectos.");
+      } else if (msg.includes("desactivada") || msg.includes("inactive")) {
+        setError("Tu cuenta está desactivada. Contactá al administrador.");
       } else {
-        setError("No se pudo conectar al servidor.");
+        setError("Error al iniciar sesión. Intentá de nuevo.");
       }
     } finally {
       setLoading(false);

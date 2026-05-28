@@ -1,39 +1,59 @@
-import axios from "axios";
+import { supabase } from "../lib/supabase";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? "/api",
-  timeout: 15000,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+const BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+async function getToken(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token ?? null;
+}
+
+function buildUrl(path: string, params?: Record<string, any>): string {
+  if (!params) return `${BASE_URL}${path}`;
+  const query = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== null) query.set(k, String(v));
   }
-  return config;
-});
+  const qs = query.toString();
+  return `${BASE_URL}${path}${qs ? `?${qs}` : ""}`;
+}
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const status = error.response?.status;
+async function request<T>(
+  method: string,
+  path: string,
+  body?: unknown,
+  params?: Record<string, any>
+): Promise<T> {
+  const token = await getToken();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
-    if (status === 401) {
-      localStorage.removeItem("token");
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-    }
+  const res = await fetch(buildUrl(path, params), {
+    method,
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
 
-    if (status === 429) {
-      console.warn("Rate limit exceeded");
-    }
+  if (res.status === 401 && window.location.pathname !== "/login") {
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+    throw new Error("Sesión expirada");
+  }
 
-    return Promise.reject(error);
-  },
-);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error ?? `HTTP ${res.status}`);
+  }
+
+  if (res.status === 204) return undefined as T;
+  return res.json();
+}
+
+const api = {
+  get: <T = any>(path: string, config?: { params?: Record<string, any> }) =>
+    request<T>("GET", path, undefined, config?.params),
+  post: <T = any>(path: string, body?: unknown) => request<T>("POST", path, body),
+  put: <T = any>(path: string, body?: unknown) => request<T>("PUT", path, body),
+  delete: <T = any>(path: string) => request<T>("DELETE", path),
+};
 
 export default api;

@@ -44,7 +44,7 @@ function imcCategoria(imc: number): { label: string; variant: "success" | "warni
 }
 
 export default function AlumnoPerfil() {
-  const { user, fetchUser } = useAuth();
+  const { user, refreshUser: fetchUser } = useAuth();
 
   const [evaluaciones, setEvaluaciones] = useState<EvaluacionSalud[]>([]);
   const [loadingEvals, setLoadingEvals] = useState(true);

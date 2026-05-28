@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
 export interface User {
-  id: number;
+  id: string;
   nombre: string;
   apellido: string;
   email: string;
@@ -10,6 +10,7 @@ export interface User {
   fecha_nacimiento: string | null;
   rol: "alumno" | "profesor" | "recepcionista" | "admin";
   activo: boolean;
+  creditos: number;
   created_at: string;
 }
 
@@ -18,8 +19,8 @@ export interface AuthState {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
-  logout: () => void;
-  fetchUser: () => Promise<void>;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 export interface RegisterData {
