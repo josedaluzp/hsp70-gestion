@@ -14,7 +14,9 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
-    CORS_ORIGINS: list[str] = ["http://localhost:5173"]
+    # Comma-separated list of allowed origins, e.g.:
+    # CORS_ORIGINS=https://hsp70.vercel.app,https://hsp70.com
+    CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:5174"]
 
     RATE_LIMIT_GENERAL: str = "100/15minutes"
     RATE_LIMIT_AUTH: str = "5/15minutes"

@@ -17,6 +17,7 @@ dependencies = [
     "python-multipart>=0.0.9",
     "email-validator>=2.0",
     "aiosqlite>=0.20",
+    "asyncpg>=0.30",
     "slowapi>=0.1.9",
 ]
 
