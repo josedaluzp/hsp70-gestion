@@ -56,7 +56,8 @@
       "Bash(echo \"EXIT: $?\")",
       "Bash(gh pr create --title 'feat: rutinas, ejercicios, MercadoPago y mejoras UI/UX' --body ':*)",
       "WebFetch(domain:www.saludcienciahsp70.com)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(gh pr:*)"
     ]
   }
 }

@@ -47,7 +47,7 @@ function todayISO(): string {
 
 interface AttendanceRow {
   inscripcionId: number;
-  alumnoId: number;
+  alumnoId: string;
   nombre: string;
   presente: boolean;
   observacion: string;

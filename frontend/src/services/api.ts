@@ -22,7 +22,7 @@ async function request<T>(
   path: string,
   body?: unknown,
   params?: Record<string, any>
-): Promise<T> {
+): Promise<{ data: T }> {
   const token = await getToken();
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -44,8 +44,9 @@ async function request<T>(
     throw new Error(err.error ?? `HTTP ${res.status}`);
   }
 
-  if (res.status === 204) return undefined as T;
-  return res.json();
+  if (res.status === 204) return { data: undefined as T };
+  const data = await res.json();
+  return { data };
 }
 
 const api = {

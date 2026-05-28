@@ -205,21 +205,6 @@ export const notificaciones = {
     api.put<{ marked: number }>("/notificaciones/leer-todas"),
 };
 
-// ─── Reportes ────────────────────────────────────────────────────────────────
-
-export const reportes = {
-  alumnosExcel: () =>
-    api.get("/reportes/alumnos/excel", { responseType: "blob" }),
-
-  asistenciasExcel: (fechaInicio: string, fechaFin: string) =>
-    api.get("/reportes/asistencias/excel", {
-      params: { fecha_inicio: fechaInicio, fecha_fin: fechaFin },
-      responseType: "blob",
-    }),
-
-  alumnoFichaPdf: (alumnoId: number) =>
-    api.get(`/reportes/alumno/${alumnoId}/pdf`, { responseType: "blob" }),
-};
 
 // ─── Stats ──────────────────────────────────────────────────────────────────
 

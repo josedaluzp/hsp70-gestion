@@ -11,7 +11,7 @@ export interface TurnoDetail extends Turno {
 
 export interface InscripcionDetail {
   id: number;
-  alumno_id: number;
+  alumno_id: string;
   turno_id: number;
   estado: string;
   fecha_inscripcion: string;
@@ -36,7 +36,7 @@ export interface AsistenciaDetail {
   fecha: string;
   presente: boolean;
   observacion: string | null;
-  alumno_id: number | null;
+  alumno_id: string | null;
   nombre_alumno: string | null;
 }
 
@@ -62,7 +62,7 @@ export interface AsistenciaUpdate {
 
 export interface EvaluacionSalud {
   id: number;
-  alumno_id: number;
+  alumno_id: string;
   profesional_id: number;
   fecha: string;
   peso_kg: number | null;
@@ -74,7 +74,7 @@ export interface EvaluacionSalud {
 }
 
 export interface EvaluacionCreate {
-  alumno_id: number;
+  alumno_id: string;
   peso_kg: number;
   altura_cm: number;
   grasa_corporal?: number | null;
@@ -83,7 +83,7 @@ export interface EvaluacionCreate {
 }
 
 export interface AlumnoBusqueda {
-  id: number;
+  id: string;
   nombre: string;
   apellido: string;
   email: string;
@@ -98,7 +98,7 @@ export interface AlumnoBusqueda {
 // ─── Turnos del profesor ─────────────────────────────────────────────────────
 
 export const misTurnos = {
-  list: (profesorId: number, params?: { page_size?: number }) =>
+  list: (profesorId: string, params?: { page_size?: number }) =>
     api.get<PaginatedResponse<Turno>>("/turnos", {
       params: { profesor_id: profesorId, page_size: params?.page_size ?? 100 },
     }),
@@ -141,7 +141,7 @@ export const asistencias = {
 // ─── Evaluaciones ────────────────────────────────────────────────────────────
 
 export const evaluaciones = {
-  listByAlumno: (alumnoId: number) =>
+  listByAlumno: (alumnoId: string) =>
     api.get<EvaluacionSalud[]>(`/alumnos/${alumnoId}/evaluaciones`),
 
   create: (data: EvaluacionCreate) =>

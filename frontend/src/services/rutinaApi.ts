@@ -55,7 +55,7 @@ export interface RutinaForm {
 export interface Asignacion {
   id: number;
   rutina_id: number;
-  alumno_id: number;
+  alumno_id: string;
   fecha_asignacion: string;
   alumno_nombre: string | null;
 }
@@ -104,12 +104,12 @@ export const rutinasApi = {
 
   delete: (id: number) => api.delete(`/rutinas/${id}`),
 
-  asignar: (rutinaId: number, alumnoId: number) =>
+  asignar: (rutinaId: number, alumnoId: string) =>
     api.post<Asignacion>(`/rutinas/${rutinaId}/asignar`, {
       alumno_id: alumnoId,
     }),
 
-  desasignar: (rutinaId: number, alumnoId: number) =>
+  desasignar: (rutinaId: number, alumnoId: string) =>
     api.delete(`/rutinas/${rutinaId}/asignar/${alumnoId}`),
 
   listAsignaciones: (rutinaId: number) =>
@@ -119,9 +119,9 @@ export const rutinasApi = {
 // ─── Rutinas (Alumno) ────────────────────────────────────────────────────────
 
 export const rutinasAlumnoApi = {
-  list: (alumnoId: number) =>
+  list: (alumnoId: string) =>
     api.get<AlumnoRutina[]>(`/alumnos/${alumnoId}/rutinas`),
 
-  get: (alumnoId: number, rutinaId: number) =>
+  get: (alumnoId: string, rutinaId: number) =>
     api.get<RutinaDetail>(`/alumnos/${alumnoId}/rutinas/${rutinaId}`),
 };

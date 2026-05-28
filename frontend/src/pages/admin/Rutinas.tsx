@@ -40,7 +40,7 @@ interface FormErrors {
 }
 
 interface AlumnoOption {
-  id: number;
+  id: string;
   nombre: string;
   apellido: string;
   email: string;
@@ -77,7 +77,7 @@ export default function Rutinas() {
   const [asignaciones, setAsignaciones] = useState<Asignacion[]>([]);
   const [loadingAsignaciones, setLoadingAsignaciones] = useState(false);
   const [alumnos, setAlumnos] = useState<AlumnoOption[]>([]);
-  const [selectedAlumnoId, setSelectedAlumnoId] = useState<number | null>(null);
+  const [selectedAlumnoId, setSelectedAlumnoId] = useState<string | null>(null);
   const [assigning, setAssigning] = useState(false);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -301,7 +301,7 @@ export default function Rutinas() {
     }
   }
 
-  async function handleDesasignar(alumnoId: number) {
+  async function handleDesasignar(alumnoId: string) {
     if (!assignRutina) return;
     try {
       await rutinasApi.desasignar(assignRutina.id, alumnoId);
@@ -672,9 +672,7 @@ export default function Rutinas() {
                   <select
                     value={selectedAlumnoId ?? ""}
                     onChange={(e) =>
-                      setSelectedAlumnoId(
-                        e.target.value ? Number(e.target.value) : null,
-                      )
+                      setSelectedAlumnoId(e.target.value || null)
                     }
                     className="block w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-800 transition-colors duration-150 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/30 focus:ring-offset-0"
                   >

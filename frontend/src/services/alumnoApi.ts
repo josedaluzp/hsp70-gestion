@@ -79,7 +79,7 @@ export const turnosAlumno = {
 // ─── Inscripciones ──────────────────────────────────────────────────────────
 
 export const inscripciones = {
-  list: (alumnoId: number, params?: { solo_activas?: boolean; page?: number; page_size?: number }) =>
+  list: (alumnoId: string, params?: { solo_activas?: boolean; page?: number; page_size?: number }) =>
     api.get<MiInscripcionList>(`/alumnos/${alumnoId}/inscripciones`, { params }),
 
   crear: (turnoId: number) =>
@@ -92,14 +92,14 @@ export const inscripciones = {
 // ─── Asistencias (propias) ──────────────────────────────────────────────────
 
 export const misAsistencias = {
-  list: (alumnoId: number, params?: { fecha_desde?: string; fecha_hasta?: string; page?: number; page_size?: number }) =>
+  list: (alumnoId: string, params?: { fecha_desde?: string; fecha_hasta?: string; page?: number; page_size?: number }) =>
     api.get<MiAsistenciaList>(`/alumnos/${alumnoId}/asistencias`, { params }),
 };
 
 // ─── Evaluaciones (propias) ─────────────────────────────────────────────────
 
 export const misEvaluaciones = {
-  list: (alumnoId: number) =>
+  list: (alumnoId: string) =>
     api.get<EvaluacionSalud[]>(`/alumnos/${alumnoId}/evaluaciones`),
 };
 
@@ -123,7 +123,7 @@ export const notificacionesAlumno = {
 // ─── Perfil ─────────────────────────────────────────────────────────────────
 
 export const perfil = {
-  update: (userId: number, data: PerfilUpdate) =>
+  update: (userId: string, data: PerfilUpdate) =>
     api.put(`/usuarios/${userId}`, data),
 };
 

@@ -42,7 +42,7 @@ function formatDate(dateStr: string): string {
 }
 
 const EMPTY_FORM: EvaluacionCreate = {
-  alumno_id: 0,
+  alumno_id: "",
   peso_kg: 0,
   altura_cm: 0,
   grasa_corporal: null,
