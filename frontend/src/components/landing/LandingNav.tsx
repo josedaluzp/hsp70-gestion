@@ -34,33 +34,64 @@ export default function LandingNav() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-black/95 backdrop-blur-md border-b border-neutral-900" : "bg-transparent"
-      }`}
+      style={{
+        fontFamily: "var(--font-landing)",
+        backgroundColor: scrolled ? "rgba(255,255,255,0.95)" : "transparent",
+        backdropFilter: scrolled ? "blur(12px)" : "none",
+        borderBottom: scrolled ? "1px solid var(--color-light-border)" : "none",
+        transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+      }}
+      className="fixed top-0 left-0 right-0 z-50"
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-        {/* Logo */}
-        <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-          <img src="/hsp-70-logo.png" alt="HSP-70" className="h-10 w-auto" />
+      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+        <a
+          href="#"
+          onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+          className="cursor-pointer"
+        >
+          <img src="/hsp-70-logo.png" alt="HSP-70" className="h-9 w-auto" />
         </a>
 
-        {/* Desktop links */}
+        {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={(e) => handleScrollTo(e, l.href)}
-              className="text-xs font-bold tracking-widest text-neutral-500 uppercase hover:text-white transition-colors cursor-pointer"
+              className="cursor-pointer text-sm font-medium transition-colors duration-200"
+              style={{ color: "var(--color-muted-stone)", letterSpacing: "0.02em" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-deep-graphite)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-muted-stone)")}
             >
               {l.label}
             </a>
           ))}
+
           <Link
             to={dashboardPath}
-            className="bg-orange-500 text-black px-4 py-2 text-xs font-black tracking-widest uppercase hover:bg-orange-400 transition-colors"
+            className="cursor-pointer text-sm font-medium transition-all duration-200"
+            style={{
+              backgroundColor: "var(--color-light-mist)",
+              color: "var(--color-dark-charcoal)",
+              borderRadius: "var(--radius-amp-btn)",
+              padding: "8px 16px",
+            }}
           >
-            {user ? "MI PANEL" : "INGRESAR"}
+            {user ? "Mi panel" : "Ingresar"}
+          </Link>
+
+          <Link
+            to="/register"
+            className="cursor-pointer text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90"
+            style={{
+              backgroundColor: "var(--color-orange-ember)",
+              borderRadius: "var(--radius-amp-btn)",
+              padding: "8px 16px",
+              boxShadow: "var(--shadow-amp-cta)",
+            }}
+          >
+            Empezar gratis
           </Link>
         </div>
 
@@ -70,31 +101,25 @@ export default function LandingNav() {
           onClick={() => setOpen(!open)}
           aria-label="Menú"
         >
-          <span className={`block w-6 h-0.5 bg-white transition-all ${open ? "rotate-45 translate-y-2" : ""}`} />
-          <span className={`block w-6 h-0.5 bg-white transition-all ${open ? "opacity-0" : ""}`} />
-          <span className={`block w-6 h-0.5 bg-white transition-all ${open ? "-rotate-45 -translate-y-2" : ""}`} />
+          <span className="block w-5 h-0.5 transition-all duration-200" style={{ backgroundColor: "var(--color-deep-graphite)", transform: open ? "rotate(45deg) translate(0, 8px)" : "none" }} />
+          <span className="block w-5 h-0.5 transition-all duration-200" style={{ backgroundColor: "var(--color-deep-graphite)", opacity: open ? 0 : 1 }} />
+          <span className="block w-5 h-0.5 transition-all duration-200" style={{ backgroundColor: "var(--color-deep-graphite)", transform: open ? "rotate(-45deg) translate(0, -8px)" : "none" }} />
         </button>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-black border-t border-neutral-900 px-4 py-4 flex flex-col gap-4">
+        <div className="md:hidden px-6 py-5 flex flex-col gap-4" style={{ backgroundColor: "var(--color-white-canvas)", borderTop: "1px solid var(--color-light-border)" }}>
           {NAV_LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              onClick={(e) => handleScrollTo(e, l.href)}
-              className="text-sm font-bold tracking-widest text-neutral-400 uppercase"
-            >
+            <a key={l.href} href={l.href} onClick={(e) => handleScrollTo(e, l.href)} className="cursor-pointer text-sm font-medium" style={{ color: "var(--color-dark-charcoal)" }}>
               {l.label}
             </a>
           ))}
-          <Link
-            to={dashboardPath}
-            onClick={() => setOpen(false)}
-            className="bg-orange-500 text-black px-4 py-3 text-sm font-black tracking-widest uppercase text-center"
-          >
-            {user ? "MI PANEL" : "INGRESAR"}
+          <Link to={dashboardPath} onClick={() => setOpen(false)} className="cursor-pointer text-sm font-medium text-center py-3" style={{ backgroundColor: "var(--color-light-mist)", color: "var(--color-dark-charcoal)", borderRadius: "var(--radius-amp-btn)" }}>
+            {user ? "Mi panel" : "Ingresar"}
+          </Link>
+          <Link to="/register" onClick={() => setOpen(false)} className="cursor-pointer text-sm font-semibold text-white text-center py-3" style={{ backgroundColor: "var(--color-orange-ember)", borderRadius: "var(--radius-amp-btn)", boxShadow: "var(--shadow-amp-cta)" }}>
+            Empezar gratis
           </Link>
         </div>
       )}

@@ -10,7 +10,14 @@ import LandingFooter from "../components/landing/LandingFooter";
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-black" style={{ scrollBehavior: "smooth" }}>
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: "var(--color-ash-gray)",
+        fontFamily: "var(--font-landing)",
+        scrollBehavior: "smooth",
+      }}
+    >
       <LandingNav />
       <LandingHero />
       <LandingStats />
