@@ -29,7 +29,7 @@ export default function LandingComoFunciona() {
         scrollTrigger: {
           trigger: section,
           start: "top top",         // pinea cuando el top del section toca el top del viewport
-          end: "+=2000",            // duración del scroll virtual mientras está pinneado (2000px)
+          end: "+=1400",            // duración del scroll virtual mientras está pinneado (1200 para revelar + 200 de "lectura")
           pin: pin,                 // el div interno queda fijo
           scrub: 1,                 // scroll-driven con 1s de lag suave
           anticipatePin: 1,
@@ -38,11 +38,13 @@ export default function LandingComoFunciona() {
 
       // Segmentos: cada paso ocupa 1/(N-1) del progreso total
       // N=3 → segmento 1: 0→0.5, segmento 2: 0.5→1.0
-      // Paso 0 fade out + Paso 1 fade in, luego Paso 1 fade out + Paso 2 fade in
+      // Paso saliente fade out completo + Paso entrante fade in
       for (let i = 0; i < pasos.length - 1; i++) {
-        tl.to(pasos[i], { opacity: 0.3, y: -10, duration: 1 }, i);
+        tl.to(pasos[i], { opacity: 0, y: -20, duration: 1 }, i);
         tl.to(pasos[i + 1], { opacity: 1, y: 0, duration: 1 }, i);
       }
+      // Beat de lectura al final: paso 3 visible un momento antes de soltar el pin
+      tl.to({}, { duration: 0.4 });
 
       return () => {
         tl.kill();
@@ -59,7 +61,7 @@ export default function LandingComoFunciona() {
       ref={sectionRef}
       id="como"
       className="p-section"
-      style={{ position: "relative", overflow: "hidden", height: "300vh" }}
+      style={{ position: "relative", overflow: "hidden" }}
     >
       <div
         ref={pinRef}
