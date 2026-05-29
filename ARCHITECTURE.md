@@ -36,7 +36,7 @@ y notificaciones internas. Roles: **admin, profesor, alumno**.
 
 ### Legado (NO usar; a eliminar — ver `docs/PLAN.md`)
 
-- `src/`, `app/` — backend FastAPI anterior.
+- `src/` — solo artefactos de build Python (`.egg-info`) del backend FastAPI anterior; sin código fuente y sin trackear en git. (El backend `app/` ya fue eliminado en M11.)
 - `hsp70.db` — base SQLite anterior.
 - `.tareas/plan.md` — plan obsoleto (reemplazado por `docs/PLAN.md`).
 

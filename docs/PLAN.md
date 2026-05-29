@@ -38,4 +38,4 @@
   claros. → Unificar en claro "amp" (D3).
 - **Eliminar rol `recepcionista`.** Alterar enum `rol_usuario` (migración) y
   quitarlo de `/stats/dashboard` (hoy lo permite).
-- **Eliminar legado.** `src/`, `app/`, `hsp70.db`, `.tareas/plan.md`.
+- **Eliminar legado.** `src/` (solo artefactos `.egg-info`), `hsp70.db`, `.tareas/plan.md`.
