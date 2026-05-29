@@ -2,7 +2,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 // Auth
 import authMe from './_handlers/auth/me'
-import authRegister from './_handlers/auth/register'
 // Usuarios
 import usuariosIndex from './_handlers/usuarios/index'
 import usuariosById from './_handlers/usuarios/id'
@@ -65,7 +64,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // /api/auth/*
     if (r0 === 'auth' && r1 === 'me') return authMe(req, res)
-    if (r0 === 'auth' && r1 === 'register') return authRegister(req, res)
 
     // /api/usuarios
     if (r0 === 'usuarios' && !r1) return usuariosIndex(req, res)
