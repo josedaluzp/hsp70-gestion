@@ -1,84 +1,73 @@
 import { useState, useEffect, useCallback, type ReactNode } from "react";
-import { supabase } from "../lib/supabase";
-import { AuthContext, type User, type RegisterData } from "./authTypes";
+import { useAuth0 } from "@auth0/auth0-react";
+import { AuthContext, type User } from "./authTypes";
+import { setAccessTokenGetter } from "../services/authToken";
 
-export type { User, RegisterData, AuthState } from "./authTypes";
+export type { User, AuthState } from "./authTypes";
 export { AuthContext } from "./authTypes";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
 
-async function fetchWithToken(path: string, options: RequestInit = {}) {
-  const { data: { session } } = await supabase.auth.getSession();
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string> ?? {}),
-  };
-  if (session?.access_token) {
-    headers["Authorization"] = `Bearer ${session.access_token}`;
-  }
-  return fetch(`${BASE_URL}${path}`, { ...options, headers });
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const {
+    isLoading,
+    isAuthenticated,
+    getAccessTokenSilently,
+    loginWithRedirect,
+    logout: auth0Logout,
+  } = useAuth0();
+
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  // Register Auth0's token getter for the non-React API client.
+  useEffect(() => {
+    setAccessTokenGetter(() => getAccessTokenSilently());
+  }, [getAccessTokenSilently]);
 
   const refreshUser = useCallback(async () => {
+    if (!isAuthenticated) {
+      setUser(null);
+      setProfileLoading(false);
+      return;
+    }
     try {
-      const res = await fetchWithToken("/auth/me");
-      if (!res.ok) { setUser(null); return; }
-      const data = await res.json();
-      setUser(data);
+      const token = await getAccessTokenSilently();
+      const res = await fetch(`${BASE_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        setUser(null);
+        return;
+      }
+      setUser(await res.json());
     } catch {
       setUser(null);
+    } finally {
+      setProfileLoading(false);
     }
-  }, []);
+  }, [isAuthenticated, getAccessTokenSilently]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        refreshUser().finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    });
+    if (!isLoading) refreshUser();
+  }, [isLoading, refreshUser]);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session) {
-        await refreshUser();
-      } else {
-        setUser(null);
-      }
-    });
+  const login = useCallback(() => {
+    void loginWithRedirect();
+  }, [loginWithRedirect]);
 
-    return () => subscription.unsubscribe();
-  }, [refreshUser]);
+  const signup = useCallback(() => {
+    void loginWithRedirect({ authorizationParams: { screen_hint: "signup" } });
+  }, [loginWithRedirect]);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw new Error(error.message);
-    await refreshUser();
-  }, [refreshUser]);
+  const logout = useCallback(() => {
+    auth0Logout({ logoutParams: { returnTo: window.location.origin } });
+  }, [auth0Logout]);
 
-  const register = useCallback(async (data: RegisterData) => {
-    const res = await fetch(`${BASE_URL}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: "Error al registrarse" }));
-      throw new Error(err.error ?? "Error al registrarse");
-    }
-  }, []);
-
-  const logout = useCallback(async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-  }, []);
+  const loading = isLoading || profileLoading;
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

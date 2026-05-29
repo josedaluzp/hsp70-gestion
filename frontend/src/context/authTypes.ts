@@ -17,20 +17,10 @@ export interface User {
 export interface AuthState {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
-  logout: () => Promise<void>;
+  login: () => void;
+  signup: () => void;
+  logout: () => void;
   refreshUser: () => Promise<void>;
-}
-
-export interface RegisterData {
-  nombre: string;
-  apellido: string;
-  email: string;
-  password: string;
-  telefono?: string;
-  dni?: string;
-  fecha_nacimiento?: string;
 }
 
 export const AuthContext = createContext<AuthState | null>(null);
