@@ -1,5 +1,8 @@
 # hsp70-gestion
 
+> **Fuente de verdad de arquitectura:** consultar `ARCHITECTURE.md` (raíz) antes
+> de implementar cualquier feature. Estado y roadmap en `docs/PLAN.md`.
+
 ## Overview
 
 # HSP-70 GESTIÓN — Plan del Proyecto
@@ -10,7 +13,10 @@ El frontend debe tener un diseño profesional, estético y minimalista. No usar 
 
 ## Tech Stack
 
-- **Stack:** python
+- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS 4
+- **API:** Funciones serverless en Vercel (catch-all `frontend/api/[...path].ts`)
+- **Base de datos:** Supabase (PostgreSQL)
+- **Auth:** Supabase Auth (migración a Auth0 planificada)
 
 ## Conventions
 
