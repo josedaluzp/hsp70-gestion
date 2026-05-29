@@ -1,87 +1,140 @@
+import { Link } from "react-router-dom";
+import { HERO_IMAGES } from "./data";
+
 export default function LandingHero() {
-  const handleScroll = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden bg-black">
-      {/* Video background — reemplazar src con video Higgsfield cuando esté disponible */}
-      <video
-        className="absolute inset-0 w-full h-full object-cover opacity-40"
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster="/images/hero-poster.jpg"
+    <section
+      id="hero"
+      style={{
+        position: "relative",
+        height: "100vh",
+        overflow: "hidden",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#111",
+      }}
+    >
+      {/* 3-column parallax grid */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: "2px",
+          zIndex: 0,
+        }}
       >
-        <source src="/images/hero-video.mp4" type="video/mp4" />
-      </video>
+        {HERO_IMAGES.map((img, i) => (
+          <div key={i} className="pcol" style={{ position: "relative", overflow: "hidden" }}>
+            <img
+              className="pimg"
+              data-speed={img.speed}
+              src={img.src}
+              alt=""
+              onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+              style={{
+                position: "absolute",
+                top: "-35%",
+                left: 0,
+                right: 0,
+                height: "170%",
+                objectFit: "cover",
+                willChange: "transform",
+                filter: "brightness(0.35)",
+              }}
+            />
+          </div>
+        ))}
+      </div>
 
-      {/* Grid overlay */}
+      {/* Dark gradient shade over everything */}
       <div
-        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "repeating-linear-gradient(90deg, rgba(249,115,22,0.04) 0px, rgba(249,115,22,0.04) 1px, transparent 1px, transparent 64px), repeating-linear-gradient(0deg, rgba(249,115,22,0.025) 0px, rgba(249,115,22,0.025) 1px, transparent 1px, transparent 64px)",
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          pointerEvents: "none",
+          background:
+            "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%), linear-gradient(to right, rgba(0,0,0,0.2) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.2) 100%)",
         }}
       />
 
-      {/* Glow */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          top: "40%", left: "50%", transform: "translate(-50%, -50%)",
-          width: "600px", height: "400px",
-          background: "radial-gradient(ellipse, rgba(249,115,22,0.1) 0%, transparent 65%)",
-        }}
-      />
+      {/* Orange hairlines between columns */}
+      <div style={{ position: "absolute", top: 0, bottom: 0, left: "33.33%", width: "1.5px", background: "rgba(249,115,22,0.3)", zIndex: 2, pointerEvents: "none" }} />
+      <div style={{ position: "absolute", top: 0, bottom: 0, left: "66.66%", width: "1.5px", background: "rgba(249,115,22,0.3)", zIndex: 2, pointerEvents: "none" }} />
 
-      {/* Content */}
-      <div className="relative z-10 px-4 sm:px-6">
-        <p className="text-xs font-black tracking-[0.5em] text-orange-500 uppercase mb-6">
+      {/* Hero body */}
+      <div style={{ position: "relative", zIndex: 10, textAlign: "center", maxWidth: "680px", padding: "0 24px" }}>
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-orange-ember)", marginBottom: "20px" }}>
           HSP-70 · Comodoro Rivadavia · Chubut
         </p>
-
-        <h1 className="font-black uppercase leading-none mb-4">
-          <span
-            className="block text-6xl sm:text-8xl lg:text-9xl tracking-tight"
-            style={{ color: "transparent", WebkitTextStroke: "1.5px rgba(249,115,22,0.5)" }}
-          >
-            SALUD
-          </span>
-          <span className="block text-6xl sm:text-8xl lg:text-9xl tracking-tight text-orange-500">
-            &amp;
-          </span>
-          <span className="block text-6xl sm:text-8xl lg:text-9xl tracking-tight text-white">
-            CIENCIA
-          </span>
+        <h1
+          style={{
+            fontFamily: "var(--font-landing)",
+            fontSize: "clamp(52px, 9vw, 78px)",
+            fontWeight: 300,
+            letterSpacing: "-0.036em",
+            lineHeight: 0.9,
+            color: "#fff",
+            marginBottom: "18px",
+            textShadow: "0 2px 48px rgba(0,0,0,0.5)",
+            textTransform: "none",
+          }}
+        >
+          Salud <span style={{ color: "var(--color-orange-ember)" }}>&amp;</span><br/>Ciencia
         </h1>
-
-        <p className="text-xs font-bold tracking-[0.3em] text-neutral-500 uppercase mt-6 mb-8">
-          Centro Fitness · Rendimiento Físico
+        <p style={{ fontSize: "17px", color: "rgba(255,255,255,0.7)", lineHeight: 1.6, maxWidth: "420px", margin: "0 auto 38px" }}>
+          Centro de fitness y rendimiento físico. Reservá clases online, sin mensualidades forzadas.
         </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={() => handleScroll("actividades")}
-            className="bg-orange-500 text-black px-8 py-4 text-sm font-black tracking-widest uppercase hover:bg-orange-400 transition-colors cursor-pointer"
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+          <Link
+            to="/register"
+            style={{
+              backgroundColor: "var(--color-orange-ember)",
+              color: "#fff",
+              borderRadius: "var(--radius-amp-btn)",
+              padding: "14px 32px",
+              fontFamily: "var(--font-landing)",
+              fontSize: "14px",
+              fontWeight: 600,
+              cursor: "pointer",
+              boxShadow: "var(--shadow-amp-cta)",
+              textDecoration: "none",
+              transition: "opacity 180ms",
+            }}
           >
-            VER ACTIVIDADES ↓
-          </button>
+            Empezar gratis
+          </Link>
           <button
-            onClick={() => handleScroll("planes")}
-            className="border border-neutral-700 text-neutral-400 px-8 py-4 text-sm font-bold tracking-widest uppercase hover:border-neutral-500 hover:text-white transition-colors cursor-pointer"
+            onClick={() => document.getElementById("actividades")?.scrollIntoView({ behavior: "smooth" })}
+            style={{
+              backgroundColor: "rgba(255,255,255,0.12)",
+              color: "#fff",
+              border: "1px solid rgba(255,255,255,0.22)",
+              borderRadius: "var(--radius-amp-btn)",
+              padding: "14px 32px",
+              fontFamily: "var(--font-landing)",
+              fontSize: "14px",
+              fontWeight: 500,
+              cursor: "pointer",
+              backdropFilter: "blur(8px)",
+              transition: "background 180ms",
+            }}
           >
-            NUESTROS PLANES
+            Ver actividades
           </button>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="mt-16 flex flex-col items-center gap-2">
-          <div className="w-px h-8 bg-orange-500/30 animate-pulse" />
-          <span className="text-[10px] tracking-[0.4em] text-neutral-700 uppercase">scroll</span>
         </div>
       </div>
+
+      {/* Scroll indicator */}
+      <div style={{ position: "absolute", bottom: "36px", left: "50%", transform: "translateX(-50%)", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+        <div style={{ width: "1px", height: "36px", background: "rgba(255,255,255,0.35)", animation: "pulse 2s ease-in-out infinite" }} />
+        <span style={{ fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>scroll</span>
+      </div>
+
+      <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }`}</style>
     </section>
   );
 }
