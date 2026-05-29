@@ -7,6 +7,7 @@ import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 import Usuarios from "./pages/admin/Usuarios";
 import Actividades from "./pages/admin/Actividades";
@@ -38,6 +39,7 @@ export default function App() {
 
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route element={<MainLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
 
