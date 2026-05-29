@@ -1,10 +1,9 @@
-import { supabase } from "../lib/supabase";
+import { getAccessToken } from "./authToken";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
 
 async function getToken(): Promise<string | null> {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.access_token ?? null;
+  return getAccessToken();
 }
 
 function buildUrl(path: string, params?: Record<string, any>): string {
@@ -34,7 +33,6 @@ async function request<T>(
   });
 
   if (res.status === 401 && window.location.pathname !== "/login") {
-    await supabase.auth.signOut();
     window.location.href = "/login";
     throw new Error("Sesión expirada");
   }
