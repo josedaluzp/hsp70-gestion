@@ -22,7 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const allowedFields = auth.rol === 'admin'
       ? ['nombre', 'apellido', 'telefono', 'dni', 'fecha_nacimiento', 'rol', 'activo', 'creditos']
-      : ['nombre', 'apellido', 'telefono']
+      : ['nombre', 'apellido', 'telefono', 'dni', 'fecha_nacimiento']
 
     const updates: Record<string, any> = {}
     for (const field of allowedFields) {

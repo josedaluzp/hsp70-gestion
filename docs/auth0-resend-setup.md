@@ -5,9 +5,10 @@
 2. Crear una **Application** tipo "Single Page Application". Anotar `Domain` y
    `Client ID` → `VITE_AUTH0_DOMAIN`, `VITE_AUTH0_CLIENT_ID`.
 3. En la app SPA, configurar:
-   - Allowed Callback URLs: `http://localhost:5173`, `https://<tu-dominio-vercel>`
-   - Allowed Logout URLs: idem
-   - Allowed Web Origins: idem
+   - Allowed Callback URLs: `http://localhost:5173/dashboard`, `https://<tu-dominio-vercel>/dashboard`
+     (el `redirect_uri` apunta a `/dashboard`)
+   - Allowed Logout URLs: el origin (`http://localhost:5173`, `https://<tu-dominio-vercel>`)
+   - Allowed Web Origins: el origin (idem que Logout)
 4. Crear una **API** en Auth0. Identifier (audience): `https://api.hsp70` →
    `VITE_AUTH0_AUDIENCE`, `AUTH0_AUDIENCE`. `AUTH0_DOMAIN` = el domain del tenant.
 5. Habilitar conexiones: Database (email+password) y Google (social).

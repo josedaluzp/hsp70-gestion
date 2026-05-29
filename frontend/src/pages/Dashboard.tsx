@@ -20,6 +20,14 @@ export default function Dashboard() {
     );
   }
 
+  const needsOnboarding =
+    user &&
+    !user.telefono &&
+    !user.dni &&
+    !user.fecha_nacimiento &&
+    !localStorage.getItem("hsp70_onboarded");
+  if (needsOnboarding) return <Navigate to="/onboarding" replace />;
+
   const target = user ? ROLE_DASHBOARDS[user.rol] ?? "/login" : "/login";
   return <Navigate to={target} replace />;
 }

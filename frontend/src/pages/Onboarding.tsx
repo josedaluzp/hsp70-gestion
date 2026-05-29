@@ -24,6 +24,7 @@ export default function Onboarding() {
         dni: dni || null,
         fecha_nacimiento: fechaNacimiento || null,
       });
+      localStorage.setItem("hsp70_onboarded", "1");
       await refreshUser();
       navigate("/dashboard", { replace: true });
     } catch {
@@ -61,7 +62,7 @@ export default function Onboarding() {
             type="button"
             variant="outline"
             className="cursor-pointer"
-            onClick={() => navigate("/dashboard", { replace: true })}
+            onClick={() => { localStorage.setItem("hsp70_onboarded", "1"); navigate("/dashboard", { replace: true }); }}
           >
             Omitir
           </Button>

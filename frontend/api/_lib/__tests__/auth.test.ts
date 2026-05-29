@@ -11,33 +11,6 @@ const mockReq = (token?: string) => ({
   headers: token ? { authorization: `Bearer ${token}` } : {},
 } as any)
 
-// Builds a chainable mock for adminClient.from('usuarios')
-function mockUsuarios(opts: {
-  byEmail?: any            // row returned by .select().eq('email').maybeSingle()
-  insertResult?: any       // row returned by .insert().select().single()
-  updateResult?: any       // row returned by .update().eq().select().single()
-}) {
-  vi.mocked(adminClient.from).mockReturnValue({
-    select: () => ({
-      eq: () => ({
-        maybeSingle: () => Promise.resolve({ data: opts.byEmail ?? null, error: null }),
-      }),
-    }),
-    insert: () => ({
-      select: () => ({
-        single: () => Promise.resolve({ data: opts.insertResult ?? null, error: opts.insertResult ? null : new Error('x') }),
-      }),
-    }),
-    update: () => ({
-      eq: () => ({
-        select: () => ({
-          single: () => Promise.resolve({ data: opts.updateResult ?? null, error: opts.updateResult ? null : new Error('x') }),
-        }),
-      }),
-    }),
-  } as any)
-}
-
 describe('verifyToken', () => {
   beforeEach(() => {
     vi.clearAllMocks()
