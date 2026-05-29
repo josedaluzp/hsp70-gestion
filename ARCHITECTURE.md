@@ -30,8 +30,8 @@ y notificaciones internas. Roles: **admin, profesor, alumno**.
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, Recharts, React Router |
 | API | Funciones serverless en Vercel — catch-all `frontend/api/[...path].ts` que enruta a `frontend/api/_handlers/**` |
 | Base de datos | Supabase (PostgreSQL) — migraciones SQL + RPC + triggers + seed en `frontend/supabase/migrations/` |
-| Auth (actual) | Supabase Auth (JWT), cliente `@supabase/supabase-js` |
-| Auth (target) | **Auth0** — migración planificada (sub-proyecto 2) |
+| Auth (actual) | **Auth0** (Universal Login, JWT validado vía JWKS con `jose`), cliente `@auth0/auth0-react` |
+| Auth (target) | **Auth0** — migración implementada (sub-proyecto 2) |
 | Despliegue | Vercel |
 
 ### Legado (NO usar; a eliminar — ver `docs/PLAN.md`)
@@ -138,14 +138,16 @@ frontend/
 
 ## 8. Modelo de Auth
 
-### Actual (Supabase Auth)
-- Frontend: `@supabase/supabase-js` con anon key. `signInWithPassword`,
-  `getSession`, `onAuthStateChange` (ver `src/context/AuthContext.tsx`).
-- API: header `Bearer <token>` → `adminClient.auth.getUser(token)` valida el JWT
-  → consulta `usuarios` para `rol` + `activo`. Si `!activo`, rechaza
-  (ver `api/_lib/auth.ts`).
-- Identidad 1:1: `usuarios.id` = `auth.users.id`.
-- Autorización por handler: `requireRole(req, res, [roles])`.
+### Actual (Auth0)
+- Frontend: `@auth0/auth0-react`, Universal Login (redirect + PKCE). El token de
+  acceso (JWT) se obtiene con `getAccessTokenSilently` y viaja como `Bearer`.
+- API: valida el JWT contra el JWKS de Auth0 (`api/_lib/auth0.ts`, librería
+  `jose`), verificando issuer y audience. Luego mapea el `sub` a la fila
+  `usuarios` por `auth0_sub` para obtener `rol` + `activo` (`api/_lib/auth.ts`).
+- Provisioning lazy: en el primer login, si no hay fila para el `sub`, se relinkea
+  por email una fila existente (preservando su rol) o se crea un `alumno`.
+- Identidad: `usuarios.auth0_sub` ↔ `sub` de Auth0; `usuarios.id` es UUID interno.
+- Emails de auth (verificación, reset, magic link) salen por Resend (SMTP custom).
 
 ### Target (Auth0 — sub-proyecto 2)
 - Puntos de integración a definir en su propio spec: verificación del token en
@@ -172,7 +174,7 @@ Ver [`docs/PLAN.md`](docs/PLAN.md).
 
 - **D1 — Stack.** React/Vite SPA + Vercel serverless (catch-all) + Supabase
   PostgreSQL. FastAPI/SQLite = legado a eliminar.
-- **D2 — Auth.** Migrar a Auth0 desde Supabase Auth (sub-proyecto 2).
+- **D2 — Auth.** Migrar a Auth0 desde Supabase Auth (sub-proyecto 2). **Implementada:** Universal Login (redirect + PKCE) en el frontend; la API valida el JWT contra el JWKS de Auth0 con `jose`; identidad desacoplada vía `usuarios.auth0_sub`; emails de auth por Resend.
 - **D3 — Tema visual.** Unificar toda la app en claro "amp"; una sola fuente de tokens.
 - **D4 — Roles.** Eliminar `recepcionista`. Roles activos: admin, profesor, alumno.
 - **D5 — Identidad.** Hoy `usuarios.id` = `auth.users.id`. Con Auth0 se definirá el mapeo.
