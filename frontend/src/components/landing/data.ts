@@ -36,3 +36,26 @@ export const PASOS = [
   { n: "2", titulo: "Comprá un pack de créditos", desc: "Usalos como y cuando quieras. Sin vencimientos forzados ni compromisos mensuales." },
   { n: "3", titulo: "Reservá tu clase online", desc: "Confirmación instantánea. Cancelá hasta 2 horas antes sin perder el crédito." },
 ];
+
+// ── Stock imagery paths (served from /public/images/stock/) ──
+export const HERO_IMAGES: { src: string; speed: number }[] = [
+  { src: "/images/stock/hero-1.jpg", speed: 0.25 },
+  { src: "/images/stock/hero-2.jpg", speed: 0.15 },
+  { src: "/images/stock/hero-3.jpg", speed: 0.20 },
+];
+
+export const STRIP_IMAGES: { src: string; speed: number; num: string; name: string; dur: string }[] = [
+  { src: "/images/stock/strip-1.jpg", speed: 0.18, num: "01", name: "Pilates Reformer",       dur: "50 min" },
+  { src: "/images/stock/strip-2.jpg", speed: 0.22, num: "02", name: "Entrenamiento Integral", dur: "60 min" },
+  { src: "/images/stock/strip-3.jpg", speed: 0.17, num: "04", name: "Cardio Intensivo",       dur: "45 min" },
+  { src: "/images/stock/strip-4.jpg", speed: 0.20, num: "05", name: "Active Recovery",        dur: "50 min" },
+  { src: "/images/stock/strip-5.jpg", speed: 0.19, num: "06", name: "Readaptación Dep.",      dur: "60 min" },
+];
+
+// Section background images (parallax bg behind content)
+export const SECTION_BG = {
+  actividades: { src: "/images/stock/section-actividades.jpg", speed: 0.12 },
+  como:        { src: "/images/stock/section-como.jpg",        speed: 0.13 },
+  equipo:      { src: "/images/equipo/equipo-grupo-1.png",     speed: 0.10 },
+  contacto:    { src: "/images/stock/section-contacto.jpg",    speed: 0.11 },
+};
