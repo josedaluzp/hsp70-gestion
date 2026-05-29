@@ -1,44 +1,45 @@
 export default function LandingFooter() {
+  const links = [
+    { label: "Instagram", href: "https://www.instagram.com/saludcienciahsp70" },
+    { label: "Facebook",  href: "https://www.facebook.com/saludcienciahsp70" },
+    { label: "WhatsApp",  href: "https://wa.me/5492976257545" },
+  ];
+
   return (
-    <footer className="bg-black border-t border-neutral-900 py-12 px-4 sm:px-6">
-      <div className="max-w-3xl mx-auto flex flex-col items-center gap-6">
-        <img src="/hsp-70-logo.png" alt="HSP-70" className="h-12 w-auto opacity-70" />
-
-        <p className="text-[10px] font-bold tracking-[0.4em] text-neutral-700 uppercase">
-          Salud &amp; Ciencia · Comodoro Rivadavia
-        </p>
-
-        <div className="flex gap-8">
+    <footer
+      style={{
+        background: "var(--color-true-black)",
+        borderTop: "1px solid rgba(255,255,255,0.07)",
+        padding: "56px 48px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "18px",
+        fontFamily: "var(--font-landing)",
+      }}
+    >
+      <img src="/hsp-70-logo.png" alt="HSP-70" style={{ height: "40px", opacity: 0.55 }} />
+      <p style={{ fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.2)" }}>
+        Salud &amp; Ciencia · Comodoro Rivadavia
+      </p>
+      <div style={{ display: "flex", gap: "32px" }}>
+        {links.map((l) => (
           <a
-            href="https://www.instagram.com/saludcienciahsp70"
+            key={l.label}
+            href={l.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] font-bold tracking-widest text-neutral-700 uppercase hover:text-orange-500 transition-colors"
+            style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.28)", textDecoration: "none", transition: "color 180ms" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-orange-ember)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.28)")}
           >
-            Instagram
+            {l.label}
           </a>
-          <a
-            href="https://www.facebook.com/saludcienciahsp70"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] font-bold tracking-widest text-neutral-700 uppercase hover:text-orange-500 transition-colors"
-          >
-            Facebook
-          </a>
-          <a
-            href="https://wa.me/5492976257545"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] font-bold tracking-widest text-neutral-700 uppercase hover:text-orange-500 transition-colors"
-          >
-            WhatsApp
-          </a>
-        </div>
-
-        <p className="text-[9px] text-neutral-800">
-          © {new Date().getFullYear()} HSP-70 · Todos los derechos reservados
-        </p>
+        ))}
       </div>
+      <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.12)" }}>
+        © {new Date().getFullYear()} HSP-70 · Todos los derechos reservados
+      </p>
     </footer>
   );
 }

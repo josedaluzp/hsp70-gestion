@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
 
 @theme {
   /* ── Primary: energetic orange ── */
@@ -79,6 +79,27 @@
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Landing — Amp Design System ── */
+  --color-orange-ember:  #f97316;
+  --color-soft-peach:    #ffdfcd;
+  --color-warm-glow:     #ffa069;
+  --color-ash-gray:      #e5e5e5;
+  --color-deep-graphite: #0a0a0a;
+  --color-white-canvas:  #ffffff;
+  --color-light-mist:    #f3f4f3;
+  --color-dark-charcoal: #292b2a;
+  --color-true-black:    #202120;
+  --color-muted-stone:   #7a7b7b;
+  --color-light-border:  #dfe0df;
+
+  --shadow-amp-cta: rgba(249, 115, 22, 0.6) 1px 6px 14px 0px, rgba(0, 0, 0, 0.06) 0px 1px 4px 0px;
+
+  --font-landing: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-amp-btn:  24px;
+  --radius-amp-card: 5px;
+  --radius-amp-img:  8px;
 }
 
 /* ── Base ── */

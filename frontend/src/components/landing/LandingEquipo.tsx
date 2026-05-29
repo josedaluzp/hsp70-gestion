@@ -1,62 +1,83 @@
-import { EQUIPO } from "./data";
-
-function MemberCard({ nombre, rol, foto }: { nombre: string; rol: string; foto: string }) {
-  return (
-    <div className="flex flex-col bg-neutral-950 border border-neutral-900 overflow-hidden group">
-      <div className="relative overflow-hidden aspect-square bg-neutral-900">
-        <img
-          src={foto}
-          alt={nombre}
-          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = "none";
-            const fallback = target.nextElementSibling as HTMLElement | null;
-            if (fallback) fallback.classList.remove("hidden");
-          }}
-        />
-        {/* Fallback avatar */}
-        <div className="hidden absolute inset-0 flex items-center justify-center bg-neutral-900">
-          <div className="w-16 h-16 rounded-full bg-neutral-800 border-2 border-orange-500/30" />
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500" />
-      </div>
-      <div className="px-3 py-3">
-        <div className="text-xs font-black uppercase tracking-wide text-white leading-tight">{nombre}</div>
-        <div className="text-[10px] text-neutral-600 mt-1">{rol}</div>
-      </div>
-    </div>
-  );
-}
+import { EQUIPO, SECTION_BG } from "./data";
 
 export default function LandingEquipo() {
   return (
-    <section id="equipo" className="bg-black py-20 px-4 sm:px-6 border-b border-neutral-900">
-      <div className="max-w-4xl mx-auto">
-        <p className="text-[10px] font-black tracking-[0.5em] text-orange-500 uppercase mb-3">
-          Quiénes somos
-        </p>
-        <h2 className="text-4xl sm:text-5xl font-black uppercase leading-none mb-12 text-white">
-          EL EQUIPO
-        </h2>
+    <section id="equipo" className="p-section" style={{ position: "relative", overflow: "hidden", backgroundColor: "#111" }}>
+      <img
+        className="pimg"
+        data-speed={SECTION_BG.equipo.speed}
+        src={SECTION_BG.equipo.src}
+        alt=""
+        onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+        style={{
+          position: "absolute",
+          top: "-35%",
+          left: 0,
+          right: 0,
+          height: "170%",
+          objectFit: "cover",
+          willChange: "transform",
+          pointerEvents: "none",
+          zIndex: 0,
+          filter: "brightness(0.12) saturate(0.3)",
+        }}
+      />
+      <div style={{ position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none", background: "linear-gradient(to bottom, rgba(10,10,10,0.75), rgba(10,10,10,0.6))" }} />
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {EQUIPO.map((m) => (
-            <MemberCard key={m.nombre} {...m} />
-          ))}
-        </div>
-
-        <div className="mt-10">
-          <p className="text-[10px] font-bold tracking-[0.3em] text-neutral-700 uppercase mb-4">
-            Deportistas que entrenan con nosotros
+      <div style={{ position: "relative", zIndex: 2, padding: "100px 48px" }}>
+        <div style={{ maxWidth: "960px", margin: "0 auto" }}>
+          <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--color-orange-ember)", marginBottom: "12px", fontFamily: "var(--font-landing)" }}>
+            Quiénes somos
           </p>
-          <div className="grid grid-cols-3 gap-3">
-            {[1, 2, 3].map((i) => (
+          <h2
+            style={{
+              fontFamily: "var(--font-landing)",
+              fontSize: "clamp(32px, 5vw, 48px)",
+              fontWeight: 300,
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+              color: "#fff",
+              marginBottom: "48px",
+              textTransform: "none",
+            }}
+          >
+            El equipo
+          </h2>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px" }}>
+            {EQUIPO.map((m) => (
               <div
-                key={i}
-                className="aspect-video bg-neutral-950 border border-neutral-900 flex items-center justify-center"
+                key={m.nombre}
+                style={{
+                  background: "rgba(255,255,255,0.07)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "var(--radius-amp-card)",
+                  overflow: "hidden",
+                  transition: "background 200ms, border-color 200ms",
+                  cursor: "default",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.12)";
+                  e.currentTarget.style.borderColor = "rgba(249,115,22,0.4)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.07)";
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                }}
               >
-                <span className="text-[9px] tracking-widest text-neutral-800 uppercase">Foto atleta</span>
+                <div style={{ position: "relative", aspectRatio: "1", overflow: "hidden", background: "rgba(255,255,255,0.05)" }}>
+                  <img
+                    src={m.foto}
+                    alt={m.nombre}
+                    onError={(e) => ((e.target as HTMLImageElement).style.opacity = "0.15")}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", filter: "brightness(0.88)", transition: "filter 280ms" }}
+                  />
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "2px", background: "var(--color-orange-ember)" }} />
+                </div>
+                <div style={{ padding: "14px" }}>
+                  <div style={{ fontSize: "13px", fontWeight: 600, color: "#fff", lineHeight: 1.3, fontFamily: "var(--font-landing)" }}>{m.nombre}</div>
+                  <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", marginTop: "3px" }}>{m.rol}</div>
+                </div>
               </div>
             ))}
           </div>
