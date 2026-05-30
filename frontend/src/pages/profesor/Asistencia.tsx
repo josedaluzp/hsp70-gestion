@@ -16,10 +16,7 @@ import {
   actividadesRef,
   inscritos as inscritosApi,
   asistencias as asistenciasApi,
-} from "../../services/profesorApi";
-import type {
-  InscripcionDetail,
-  AsistenciaDetail,
+  pausa as pausaApi,
 } from "../../services/profesorApi";
 import type { Turno, Actividad } from "../../services/adminApi";
 
@@ -49,10 +46,12 @@ interface AttendanceRow {
   inscripcionId: number;
   alumnoId: string;
   nombre: string;
+  enPausa: boolean;
   presente: boolean;
   observacion: string;
   asistenciaId: number | null;
   dirty: boolean;
+  pausaSaving: boolean;
 }
 
 export default function ProfesorAsistencia() {
@@ -125,29 +124,32 @@ export default function ProfesorAsistencia() {
           asistenciasApi.listByTurno(turnoId, fecha),
         ]);
 
-        const activeInscripciones = inscRes.data.items.filter(
-          (i) => i.estado === "activa",
-        );
+        const inscArray = (inscRes.data as unknown as any[]) ?? [];
+        const asistArray = (asistRes.data as unknown as any[]) ?? [];
 
-        const asistMap = new Map<number, AsistenciaDetail>();
-        asistRes.data.items.forEach((a) => {
-          asistMap.set(a.inscripcion_id, a);
-        });
+        const asistMap = new Map<number, { id: number; presente: boolean; observacion: string | null }>();
+        for (const a of asistArray) {
+          const inscId = a?.inscripcion?.id;
+          if (inscId != null) asistMap.set(inscId, { id: a.id, presente: a.presente, observacion: a.observacion });
+        }
 
-        const newRows: AttendanceRow[] = activeInscripciones.map(
-          (insc: InscripcionDetail) => {
+        const newRows: AttendanceRow[] = inscArray
+          .filter((i) => i.estado === "activa")
+          .map((insc) => {
             const existing = asistMap.get(insc.id);
+            const alumno = insc.alumno ?? {};
             return {
               inscripcionId: insc.id,
-              alumnoId: insc.alumno_id,
-              nombre: insc.nombre_alumno ?? `Alumno #${insc.alumno_id}`,
+              alumnoId: alumno.id,
+              nombre: alumno.nombre ? `${alumno.nombre} ${alumno.apellido ?? ""}`.trim() : `Alumno #${insc.id}`,
+              enPausa: Boolean(alumno.en_pausa),
               presente: existing?.presente ?? false,
               observacion: existing?.observacion ?? "",
               asistenciaId: existing?.id ?? null,
               dirty: false,
+              pausaSaving: false,
             };
-          },
-        );
+          });
 
         newRows.sort((a, b) => a.nombre.localeCompare(b.nombre));
         setRows(newRows);
@@ -170,6 +172,19 @@ export default function ProfesorAsistencia() {
       ),
     );
     setSaveMsg(null);
+  }, []);
+
+  const togglePausa = useCallback(async (inscripcionId: number, alumnoId: string) => {
+    setRows((prev) => prev.map((r) =>
+      r.inscripcionId === inscripcionId ? { ...r, pausaSaving: true } : r));
+    try {
+      const res = await pausaApi.toggle(alumnoId);
+      setRows((prev) => prev.map((r) =>
+        r.inscripcionId === inscripcionId ? { ...r, enPausa: res.data.en_pausa, pausaSaving: false } : r));
+    } catch {
+      setRows((prev) => prev.map((r) =>
+        r.inscripcionId === inscripcionId ? { ...r, pausaSaving: false } : r));
+    }
   }, []);
 
   const updateObservacion = useCallback(
@@ -221,17 +236,16 @@ export default function ProfesorAsistencia() {
       // Mark all as clean and refresh asistencia IDs
       const turnoId = Number(selectedTurno);
       const asistRes = await asistenciasApi.listByTurno(turnoId, fecha);
-      const asistMap = new Map<number, AsistenciaDetail>();
-      asistRes.data.items.forEach((a) => asistMap.set(a.inscripcion_id, a));
+      const asistMap = new Map<number, { id: number }>();
+      for (const a of (asistRes.data as unknown as any[]) ?? []) {
+        const inscId = a?.inscripcion?.id;
+        if (inscId != null) asistMap.set(inscId, { id: a.id });
+      }
 
       setRows((prev) =>
         prev.map((r) => {
           const updated = asistMap.get(r.inscripcionId);
-          return {
-            ...r,
-            asistenciaId: updated?.id ?? r.asistenciaId,
-            dirty: false,
-          };
+          return { ...r, asistenciaId: updated?.id ?? r.asistenciaId, dirty: false };
         }),
       );
     } catch {
@@ -357,6 +371,17 @@ export default function ProfesorAsistencia() {
                       Presente
                     </Badge>
                   )}
+                </label>
+
+                <label className="flex items-center gap-2 text-xs text-neutral-600">
+                  <input
+                    type="checkbox"
+                    checked={row.enPausa}
+                    disabled={row.pausaSaving}
+                    onChange={() => togglePausa(row.inscripcionId, row.alumnoId)}
+                    className="h-4 w-4 rounded border-neutral-300 text-warning-500 focus:ring-warning-500"
+                  />
+                  En pausa
                 </label>
 
                 {/* Observation */}

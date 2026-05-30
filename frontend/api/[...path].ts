@@ -44,6 +44,9 @@ import rutinasAsignar from './_handlers/rutinas/id/asignar'
 import rutinasAsignaciones from './_handlers/rutinas/id/asignaciones'
 // Stats & Notificaciones
 import statsDashboard from './_handlers/stats/dashboard'
+import statsHorariosPico from './_handlers/stats/horarios-pico'
+import statsRetencion from './_handlers/stats/retencion'
+import usuariosPausa from './_handlers/usuarios/id/pausa'
 import notificacionesIndex from './_handlers/notificaciones/index'
 import notificacionesLeer from './_handlers/notificaciones/id/leer'
 import notificacionesLeerTodas from './_handlers/notificaciones/leer-todas'
@@ -73,6 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (r0 === 'usuarios' && r1 && !r2) return usuariosById(injectId(req, r1), res)
     if (r0 === 'usuarios' && r1 && r2 === 'toggle-activo') return usuariosToggleActivo(injectId(req, r1), res)
     if (r0 === 'usuarios' && r1 && r2 === 'creditos') return usuariosCreditos(injectId(req, r1), res)
+    if (r0 === 'usuarios' && r1 && r2 === 'pausa') return usuariosPausa(injectId(req, r1), res)
 
     // /api/actividades
     if (r0 === 'actividades' && !r1) return actividadesIndex(req, res)
@@ -122,6 +126,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // /api/stats
     if (r0 === 'stats' && r1 === 'dashboard') return statsDashboard(req, res)
+    if (r0 === 'stats' && r1 === 'horarios-pico') return statsHorariosPico(req, res)
+    if (r0 === 'stats' && r1 === 'retencion') return statsRetencion(req, res)
 
     // /api/notificaciones
     if (r0 === 'notificaciones' && !r1) return notificacionesIndex(req, res)
