@@ -4,22 +4,20 @@ import { requireRole } from '../../../_lib/auth'
 import { notFound } from '../../../_lib/errors'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const auth = await requireRole(req, res, ['admin'])
+  const auth = await requireRole(req, res, ['admin', 'profesor'])
   if (!auth) return
 
-  if (req.method !== 'PUT') return res.status(405).json({ error: 'Method not allowed' })
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   const { id } = req.query as { id: string }
 
   const { data: current } = await adminClient
-    .from('usuarios').select('activo').eq('id', id).single()
+    .from('usuarios').select('en_pausa').eq('id', id).single()
   if (!current) return notFound(res)
-
-  const nuevoActivo = !current.activo
 
   const { data, error } = await adminClient
     .from('usuarios')
-    .update({ activo: nuevoActivo, baja_at: nuevoActivo ? null : new Date().toISOString() })
+    .update({ en_pausa: !current.en_pausa })
     .eq('id', id)
     .select()
     .single()
