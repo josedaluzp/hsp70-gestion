@@ -14,6 +14,7 @@
 - Dashboards básicos por rol (alumno, profesor, admin).
 - Landing page.
 - Migración de stack a Vercel serverless + Supabase.
+- Dashboard de métricas Admin — altas, bajas, en pausa, morosos, horarios pico, retención.
 
 ## Sub-proyectos pendientes (en orden)
 
@@ -21,9 +22,6 @@
    *(en curso)*
 2. **Auth con Auth0** — reemplaza Supabase Auth. Rama propia. Define el mapeo de
    identidad `usuarios.id` ↔ Auth0.
-3. **Dashboard de métricas Admin** — altas, bajas, inactivos, horarios pico,
-   morosos/vencimientos, retención. Incluye arreglar el contrato de
-   `/stats/dashboard`.
 
 ## Deuda técnica / bugs detectados
 
@@ -31,7 +29,9 @@
   (`totalAlumnos`, `totalTurnos`, `inscripcionesActivas`, `actividades`) pero el
   frontend espera snake_case (`total_alumnos`, `total_profesores`, `turnos_hoy`,
   `inscripciones_activas`, `asistencia_semanal`). Faltan `total_profesores`,
-  `turnos_hoy` y `asistencia_semanal`. → Se resuelve en el sub-proyecto 3.
+  `turnos_hoy` y `asistencia_semanal`. → **Resuelto** en el sub-proyecto Dashboard
+  de métricas Admin (reescritura de `/stats/dashboard` con contrato snake_case).
+- **Contratos frontend↔API desalineados.** Varios handlers post-migración devuelven arrays crudos o `{data,total}` mientras los servicios esperan `{items,...}` (ej. `/turnos/:id/inscritos`, `/turnos/:id/asistencias`, `/usuarios`). Asistencia quedó arreglada en el dashboard sub-proyecto; el resto sigue pendiente.
 - **Links rotos en dashboard de alumno.** `/alumno/actividades`,
   `/alumno/inscripciones` y `/alumno/pagos` no existen en `App.tsx`.
 - **Inconsistencia de tema.** Layout y dashboard admin oscuros vs alumno/profesor

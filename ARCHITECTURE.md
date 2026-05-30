@@ -97,7 +97,8 @@ frontend/
 14 tablas (PostgreSQL):
 
 - **usuarios** — `id uuid` (= `auth.users.id`), nombre, apellido, email, telefono,
-  dni, fecha_nacimiento, `rol`, activo, creditos, created_at.
+  dni, fecha_nacimiento, `rol`, activo, creditos, created_at, `en_pausa`
+  (pausa temporal marcada por profesor), `baja_at` (fecha de baja).
 - **actividades** — nombre, descripcion, cupo_maximo, duracion_min, activa.
 - **turnos** — actividad_id, profesor_id, dia_semana, hora_inicio, hora_fin,
   sala, activo.
