@@ -12,7 +12,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { data, error } = await adminClient.from('inscripciones').select(`
     id, estado, fecha_inscripcion,
-    alumno:usuarios!inscripciones_alumno_id_fkey(id, nombre, apellido, email, dni)
+    alumno:usuarios!inscripciones_alumno_id_fkey(id, nombre, apellido, email, dni, en_pausa)
   `).eq('turno_id', id).eq('estado', 'activa').order('fecha_inscripcion')
 
   if (error) return res.status(500).json({ error: error.message })
