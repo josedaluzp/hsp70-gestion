@@ -20,6 +20,7 @@ export interface InscripcionDetail {
   dia_semana: string | null;
   hora_inicio: string | null;
   posicion_espera: number | null;
+  en_pausa?: boolean;
 }
 
 export interface InscripcionList {
@@ -155,4 +156,11 @@ export const alumnos = {
     api.get<PaginatedResponse<AlumnoBusqueda>>("/usuarios", {
       params: { rol: "alumno", search, page_size: 20 },
     }),
+};
+
+// ─── Pausa (inactivo temporal) ───────────────────────────────────────────────
+
+export const pausa = {
+  toggle: (alumnoId: string) =>
+    api.post<{ id: string; en_pausa: boolean }>(`/usuarios/${alumnoId}/pausa`),
 };

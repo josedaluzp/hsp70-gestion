@@ -214,6 +214,13 @@ export interface AttendanceDay {
   ausentes: number;
 }
 
+export interface UsuarioMini {
+  id: string;
+  nombre: string;
+  apellido: string;
+  email: string;
+}
+
 export interface DashboardStats {
   total_alumnos: number;
   total_profesores: number;
@@ -221,8 +228,31 @@ export interface DashboardStats {
   turnos_hoy: number;
   inscripciones_activas: number;
   asistencia_semanal: AttendanceDay[];
+  altas_30d: number;
+  bajas: number;
+  en_pausa: number;
+  morosos: number;
+  altas_lista: UsuarioMini[];
+  bajas_lista: UsuarioMini[];
+  en_pausa_lista: UsuarioMini[];
+  morosos_lista: UsuarioMini[];
+}
+
+export interface HorarioCelda {
+  dia: string;
+  hora: number;
+  total: number;
+}
+
+export interface RetencionMes {
+  mes: string;
+  altas: number;
+  bajas: number;
+  asistentes_unicos: number;
 }
 
 export const stats = {
   dashboard: () => api.get<DashboardStats>("/stats/dashboard"),
+  horariosPico: () => api.get<{ celdas: HorarioCelda[] }>("/stats/horarios-pico"),
+  retencion: () => api.get<{ meses: RetencionMes[] }>("/stats/retencion"),
 };
