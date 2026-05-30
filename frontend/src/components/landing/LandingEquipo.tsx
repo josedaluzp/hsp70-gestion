@@ -1,28 +1,42 @@
-import { EQUIPO, SECTION_BG } from "./data";
+import { EQUIPO } from "./data";
 
 export default function LandingEquipo() {
   return (
     <section id="equipo" className="p-section" style={{ position: "relative", overflow: "hidden", backgroundColor: "#111" }}>
+      <style>{`
+        .team-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          max-width: 960px;
+          margin: 0 auto;
+        }
+        @media (max-width: 768px) {
+          .team-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+      `}</style>
+
+      {/* Background: logo HSP-70 centrado, muy sutil */}
       <img
-        className="pimg"
-        data-speed={SECTION_BG.equipo.speed}
-        src={SECTION_BG.equipo.src}
+        src="/hsp-70-logo.png"
         alt=""
         onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
         style={{
           position: "absolute",
-          top: "-35%",
-          left: 0,
-          right: 0,
-          height: "170%",
-          objectFit: "cover",
-          willChange: "transform",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "min(70%, 700px)",
+          objectFit: "contain",
           pointerEvents: "none",
           zIndex: 0,
-          filter: "brightness(0.12) saturate(0.3)",
+          opacity: 0.05,
+          filter: "grayscale(1) brightness(1.5)",
         }}
       />
-      <div style={{ position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none", background: "linear-gradient(to bottom, rgba(10,10,10,0.75), rgba(10,10,10,0.6))" }} />
+      <div style={{ position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none", background: "linear-gradient(to bottom, rgba(10,10,10,0.5), rgba(10,10,10,0.35))" }} />
 
       <div style={{ position: "relative", zIndex: 2, padding: "100px 48px" }}>
         <div style={{ maxWidth: "960px", margin: "0 auto" }}>
@@ -44,7 +58,7 @@ export default function LandingEquipo() {
             El equipo
           </h2>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px" }}>
+          <div className="team-grid">
             {EQUIPO.map((m) => (
               <div
                 key={m.nombre}

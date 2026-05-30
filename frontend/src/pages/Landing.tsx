@@ -1,3 +1,4 @@
+import { useLenis } from "../hooks/useLenis";
 import { useParallax } from "../hooks/useParallax";
 import LandingNav from "../components/landing/LandingNav";
 import LandingHero from "../components/landing/LandingHero";
@@ -10,6 +11,9 @@ import LandingContacto from "../components/landing/LandingContacto";
 import LandingFooter from "../components/landing/LandingFooter";
 
 export default function Landing() {
+  // Lenis primero — registra el ticker de GSAP y el rAF loop.
+  // useParallax (GSAP ScrollTrigger) depende de que el ticker esté activo.
+  useLenis();
   useParallax();
 
   return (
